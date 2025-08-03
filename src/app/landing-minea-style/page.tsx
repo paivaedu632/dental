@@ -58,33 +58,41 @@ export default function LandingMineaStyle() {
         </div>
       </header>
 
-      {/* Hero Section - Video + Content Layout */}
-      <section className="py-20">
+      {/* Hero Section - Video + Content Layout with Minea Spacing */}
+      <section className="py-24">
         <div className="container mx-auto px-4">
           <div className="max-w-7xl mx-auto">
-            {/* Centered Header Content */}
-            <div className="text-center mb-16">
-              {/* Attention Badge */}
-              <div className="bg-black text-white px-6 py-3 rounded-lg inline-block mb-8">
-                <span className="text-sm md:text-base font-bold tracking-wide">
+            {/* Centered Header Content - Exact Minea Specifications */}
+            <div className="text-center mb-20">
+              {/* Attention Badge - Minea Style */}
+              <div className="bg-black text-white px-6 py-3 rounded-lg inline-block mb-12">
+                <span className="text-sm md:text-base font-semibold tracking-wide">
                   ATTENTION DENTISTS & DENTAL PRACTICE OWNERS:
                 </span>
               </div>
 
-              {/* Main Headline - Minea Typography Scale */}
-              <h1 className="text-5xl md:text-7xl font-bold text-gray-900 leading-tight mb-6">
+              {/* Main Headline - Exact Minea Typography: Mobile 48px/58px, Desktop 64px/76px */}
+              <h1 className="font-semibold text-gray-900 mb-8 text-5xl md:text-6xl leading-tight md:leading-tight" style={{
+                fontSize: 'clamp(48px, 5vw, 64px)',
+                lineHeight: 'clamp(58px, 6vw, 76px)',
+                fontFamily: 'Inter, "Inter Placeholder", sans-serif'
+              }}>
                 Free Trial: 10 Guaranteed
                 <span className="block text-black">Appointments</span>
               </h1>
 
-              {/* Subheadline */}
-              <p className="text-xl md:text-2xl text-gray-600 max-w-4xl mx-auto leading-relaxed">
+              {/* Subheadline - Exact Minea Typography: Mobile 16px/24px, Desktop 18px/28px */}
+              <p className="text-gray-600 max-w-4xl mx-auto font-semibold" style={{
+                fontSize: 'clamp(16px, 2vw, 18px)',
+                lineHeight: 'clamp(24px, 3vw, 28px)',
+                fontFamily: 'Inter, "Inter Placeholder", sans-serif'
+              }}>
                 You only cover the $300 ad cost. No setup fees. No contracts. Just results.
               </p>
             </div>
 
-            {/* Video + Content Layout */}
-            <div className="grid lg:grid-cols-2 gap-12 items-center">
+            {/* Video + Content Layout - Minea Spacing */}
+            <div className="grid lg:grid-cols-2 gap-16 items-center">
               {/* Left Column - Video */}
               <div className="relative">
                 <div className="relative bg-black rounded-2xl overflow-hidden shadow-2xl">
@@ -129,71 +137,107 @@ export default function LandingMineaStyle() {
                 </div>
               </div>
 
-              {/* Right Column - Content */}
-              <div className="space-y-6">
-                {/* Content */}
-                <div className="prose prose-lg max-w-none">
-                  <p className="text-gray-700 leading-relaxed text-lg">
-                    We invest <strong className="text-gray-900">$300 in targeted ads</strong> to guarantee your first 10 appointments
+              {/* Right Column - Content with Minea Typography */}
+              <div className="space-y-8">
+                {/* Content - Minea Body Text Specifications */}
+                <div className="max-w-none">
+                  <p className="text-gray-700 mb-6" style={{
+                    fontSize: '16px',
+                    lineHeight: '24px',
+                    fontFamily: 'Inter, "Inter Placeholder", sans-serif',
+                    fontWeight: '500'
+                  }}>
+                    We invest <strong className="text-gray-900 font-semibold">$300 in targeted ads</strong> to guarantee your first 10 appointments
                     within 28 days. You only pay for the ad spend - no setup fees, no contracts, no hidden costs.
                     This practice management tool has been carefully designed to not just manage your practice,
                     but to actively grow it from day one with real patients booking real appointments.
                   </p>
 
-                  <p className="text-gray-700 leading-relaxed">
+                  <p className="text-gray-700 mb-6" style={{
+                    fontSize: '16px',
+                    lineHeight: '24px',
+                    fontFamily: 'Inter, "Inter Placeholder", sans-serif',
+                    fontWeight: '500'
+                  }}>
                     DentalFlow stands out because we put our money where our mouth is.
                     Instead of charging setup fees like other software companies, we
-                    <strong className="text-gray-900"> invest in your success</strong> by running professional ad campaigns
+                    <strong className="text-gray-900 font-semibold"> invest in your success</strong> by running professional ad campaigns
                     that bring qualified patients directly to your practice within the first month.
                   </p>
 
-                  <p className="text-gray-700 leading-relaxed">
-                    The result? You get a <strong className="text-gray-900">powerful practice management system</strong> plus
+                  <p className="text-gray-700" style={{
+                    fontSize: '16px',
+                    lineHeight: '24px',
+                    fontFamily: 'Inter, "Inter Placeholder", sans-serif',
+                    fontWeight: '500'
+                  }}>
+                    The result? You get a <strong className="text-gray-900 font-semibold">powerful practice management system</strong> plus
                     10 guaranteed appointments within 28 days to start generating revenue immediately.
                     This combination of software and marketing makes DentalFlow the
-                    <strong className="text-gray-900"> complete growth solution</strong> for dental practices.
+                    <strong className="text-gray-900 font-semibold"> complete growth solution</strong> for dental practices.
                   </p>
                 </div>
 
-                {/* CTA Button */}
-                <div className="pt-4">
+                {/* CTA Button - Minea Spacing */}
+                <div className="pt-8">
                   <Button
                     size="lg"
-                    className="bg-black hover:bg-gray-800 text-white font-semibold px-8 py-4 text-lg rounded-lg"
+                    className="bg-black hover:bg-gray-800 text-white font-semibold px-8 py-4 rounded-lg"
+                    style={{
+                      fontSize: '16px',
+                      fontFamily: 'Inter, "Inter Placeholder", sans-serif'
+                    }}
                   >
                     Start My Free Trial
                     <ArrowRight className="w-5 h-5 ml-2" />
                   </Button>
                 </div>
 
-                {/* Trust Indicators */}
-                <div className="flex flex-wrap items-center gap-6 text-sm text-gray-600 pt-2">
+                {/* Trust Indicators - Minea Typography */}
+                <div className="flex flex-wrap items-center gap-6 pt-6">
                   <div className="flex items-center gap-2">
                     <CheckCircle className="w-4 h-4 text-green-600" />
-                    <span>Only pay $300 ad cost</span>
+                    <span className="text-gray-600" style={{
+                      fontSize: '14px',
+                      fontFamily: 'Inter, "Inter Placeholder", sans-serif',
+                      fontWeight: '500'
+                    }}>Only pay $300 ad cost</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <CheckCircle className="w-4 h-4 text-green-600" />
-                    <span>No setup fees ever</span>
+                    <span className="text-gray-600" style={{
+                      fontSize: '14px',
+                      fontFamily: 'Inter, "Inter Placeholder", sans-serif',
+                      fontWeight: '500'
+                    }}>No setup fees ever</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <CheckCircle className="w-4 h-4 text-green-600" />
-                    <span>28-day guarantee</span>
+                    <span className="text-gray-600" style={{
+                      fontSize: '14px',
+                      fontFamily: 'Inter, "Inter Placeholder", sans-serif',
+                      fontWeight: '500'
+                    }}>28-day guarantee</span>
                   </div>
                 </div>
               </div>
             </div>
 
-            {/* Social Proof Section - Bottom of Hero */}
-            <div className="mt-20 pt-16 border-t border-gray-200">
-              <div className="text-center mb-12">
-                <p className="text-gray-600 text-lg">
+            {/* Social Proof Section - Bottom of Hero with Minea Spacing */}
+            <div className="mt-24 pt-20 border-t border-gray-200">
+              <div className="text-center mb-16">
+                <p className="text-gray-600" style={{
+                  fontSize: '18px',
+                  lineHeight: '28px',
+                  fontFamily: 'Inter, "Inter Placeholder", sans-serif',
+                  fontWeight: '600'
+                }}>
                   Trusted by dental practices nationwide
                 </p>
               </div>
 
-              {/* Stats Row */}
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-4xl mx-auto mb-12">
+              {/* Stats Row - Minea Typography */}
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-4xl mx-auto mb-16">
                 {[
                   { number: '2,500+', label: 'Dental Practices' },
                   { number: '40%', label: 'Revenue Increase' },
@@ -201,18 +245,28 @@ export default function LandingMineaStyle() {
                   { number: '15 min', label: 'Setup Time' }
                 ].map((stat, index) => (
                   <div key={index} className="text-center">
-                    <div className="text-3xl md:text-4xl font-bold text-gray-900 mb-2">
+                    <div className="font-bold text-gray-900 mb-3" style={{
+                      fontSize: '48px',
+                      lineHeight: '58px',
+                      fontFamily: 'Inter, "Inter Placeholder", sans-serif',
+                      fontWeight: '700'
+                    }}>
                       {stat.number}
                     </div>
-                    <div className="text-gray-600 text-sm">
+                    <div className="text-gray-600" style={{
+                      fontSize: '16px',
+                      lineHeight: '24px',
+                      fontFamily: 'Inter, "Inter Placeholder", sans-serif',
+                      fontWeight: '500'
+                    }}>
                       {stat.label}
                     </div>
                   </div>
                 ))}
               </div>
 
-              {/* Trust Indicators Grid */}
-              <div className="grid md:grid-cols-3 gap-8 max-w-4xl mx-auto">
+              {/* Trust Indicators Grid - Minea Typography */}
+              <div className="grid md:grid-cols-3 gap-12 max-w-4xl mx-auto">
                 {[
                   {
                     icon: Users,
@@ -236,16 +290,31 @@ export default function LandingMineaStyle() {
                   const Icon = item.icon
                   return (
                     <div key={index} className="text-center">
-                      <div className="w-16 h-16 bg-black rounded-2xl flex items-center justify-center mx-auto mb-4">
+                      <div className="w-16 h-16 bg-black rounded-2xl flex items-center justify-center mx-auto mb-6">
                         <Icon className="w-8 h-8 text-white" />
                       </div>
-                      <div className="text-2xl font-bold text-gray-900 mb-2">
+                      <div className="font-bold text-gray-900 mb-3" style={{
+                        fontSize: '24px',
+                        lineHeight: '38px',
+                        fontFamily: 'Inter, "Inter Placeholder", sans-serif',
+                        fontWeight: '700'
+                      }}>
                         {item.stat}
                       </div>
-                      <div className="text-lg font-semibold text-gray-700 mb-2">
+                      <div className="font-semibold text-gray-700 mb-3" style={{
+                        fontSize: '18px',
+                        lineHeight: '28px',
+                        fontFamily: 'Inter, "Inter Placeholder", sans-serif',
+                        fontWeight: '600'
+                      }}>
                         {item.label}
                       </div>
-                      <div className="text-gray-600 text-sm">
+                      <div className="text-gray-600" style={{
+                        fontSize: '16px',
+                        lineHeight: '24px',
+                        fontFamily: 'Inter, "Inter Placeholder", sans-serif',
+                        fontWeight: '500'
+                      }}>
                         {item.description}
                       </div>
                     </div>
