@@ -38,30 +38,30 @@ export default function MineaStyleLanding() {
                 You only cover the $300 ad cost. No setup fees. No contracts. Just results.
               </p>
 
-              {/* Trust Indicators - Moved from content section to headline section */}
+              {/* Trust Indicators - Typography matching subheadline exactly */}
               <div className="flex flex-wrap items-center justify-center gap-6">
                 <div className="flex items-center gap-2">
                   <CheckCircle className="w-4 h-4 text-green-600" />
-                  <span className="text-gray-600" style={{
-                    fontSize: '14px',
-                    fontFamily: 'Inter, "Inter Placeholder", sans-serif',
-                    fontWeight: '500'
+                  <span className="text-gray-600 font-semibold" style={{
+                    fontSize: 'clamp(16px, 2vw, 18px)',
+                    lineHeight: 'clamp(24px, 3vw, 28px)',
+                    fontFamily: 'Inter, "Inter Placeholder", sans-serif'
                   }}>Only pay $300 ad cost</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <CheckCircle className="w-4 h-4 text-green-600" />
-                  <span className="text-gray-600" style={{
-                    fontSize: '14px',
-                    fontFamily: 'Inter, "Inter Placeholder", sans-serif',
-                    fontWeight: '500'
+                  <span className="text-gray-600 font-semibold" style={{
+                    fontSize: 'clamp(16px, 2vw, 18px)',
+                    lineHeight: 'clamp(24px, 3vw, 28px)',
+                    fontFamily: 'Inter, "Inter Placeholder", sans-serif'
                   }}>No setup fees ever</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <CheckCircle className="w-4 h-4 text-green-600" />
-                  <span className="text-gray-600" style={{
-                    fontSize: '14px',
-                    fontFamily: 'Inter, "Inter Placeholder", sans-serif',
-                    fontWeight: '500'
+                  <span className="text-gray-600 font-semibold" style={{
+                    fontSize: 'clamp(16px, 2vw, 18px)',
+                    lineHeight: 'clamp(24px, 3vw, 28px)',
+                    fontFamily: 'Inter, "Inter Placeholder", sans-serif'
                   }}>28-day guarantee</span>
                 </div>
               </div>
