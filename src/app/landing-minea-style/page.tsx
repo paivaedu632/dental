@@ -20,7 +20,7 @@ export default function MineaStyleLanding() {
               </div>
 
               {/* Main Headline - Landing-v2 Typography: text-3xl sm:text-4xl font-bold */}
-              <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-8 lg:mb-12">
+              <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4 lg:mb-6">
                 We Guarantee Your First 10 Appointments
               </h1>
 
