@@ -6,10 +6,39 @@ import { CheckCircle, Play } from "lucide-react"
 export default function MineaStyleLanding() {
   return (
     <div className="min-h-screen bg-white">
-      {/* Simplified Hero Section - Video + Content Only */}
+      {/* Hero Section with Headline + Video + Content */}
       <section className="py-16 lg:py-24">
         <div className="container mx-auto px-6 lg:px-8">
           <div className="max-w-6xl mx-auto">
+            {/* Headline Section - Exact Minea Specifications */}
+            <div className="text-center mb-16 lg:mb-20">
+              {/* Attention Banner - Minea Style */}
+              <div className="bg-black text-white px-6 py-3 rounded-lg inline-block mb-8 lg:mb-12">
+                <span className="text-sm md:text-base font-semibold tracking-wide">
+                  ATTENTION DENTISTS & DENTAL PRACTICE OWNERS:
+                </span>
+              </div>
+
+              {/* Main Headline - Exact Minea Typography: Mobile 48px/58px, Desktop 64px/76px */}
+              <h1 className="font-semibold text-gray-900 mb-6 lg:mb-8" style={{
+                fontSize: 'clamp(48px, 5vw, 64px)',
+                lineHeight: 'clamp(58px, 6vw, 76px)',
+                fontFamily: 'Inter, "Inter Placeholder", sans-serif'
+              }}>
+                Free Trial: 10 Guaranteed
+                <span className="block text-black">Appointments</span>
+              </h1>
+
+              {/* Subheadline - Exact Minea Typography: Mobile 16px/24px, Desktop 18px/28px */}
+              <p className="text-gray-600 max-w-4xl mx-auto font-semibold" style={{
+                fontSize: 'clamp(16px, 2vw, 18px)',
+                lineHeight: 'clamp(24px, 3vw, 28px)',
+                fontFamily: 'Inter, "Inter Placeholder", sans-serif'
+              }}>
+                You only cover the $300 ad cost. No setup fees. No contracts. Just results.
+              </p>
+            </div>
+
             {/* Video + Content Layout - Optimized Spacing */}
             <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-start">
               {/* Left Column - Video with Proper Spacing */}
