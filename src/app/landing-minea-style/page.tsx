@@ -62,6 +62,26 @@ export default function LandingMineaStyle() {
       <section className="py-20">
         <div className="container mx-auto px-4">
           <div className="max-w-7xl mx-auto">
+            {/* Centered Header Content */}
+            <div className="text-center mb-16">
+              {/* Badge */}
+              <Badge className="bg-gray-100 text-gray-800 border-gray-200 text-sm px-4 py-2 mb-6">
+                <Star className="w-4 h-4 mr-2 fill-current" />
+                Free Trial
+              </Badge>
+
+              {/* Main Headline */}
+              <h1 className="text-4xl md:text-6xl font-bold text-gray-900 leading-tight mb-6">
+                Get 10 Guaranteed Dental Appointments
+                <span className="block text-black">in 28 days</span>
+              </h1>
+
+              {/* Subheadline */}
+              <p className="text-xl md:text-2xl text-gray-600 max-w-4xl mx-auto leading-relaxed">
+                You only cover the $300 ad cost. No setup fees. No contracts. Just results.
+              </p>
+            </div>
+
             {/* Video + Content Layout */}
             <div className="grid lg:grid-cols-2 gap-12 items-center">
               {/* Left Column - Video */}
@@ -83,7 +103,7 @@ export default function LandingMineaStyle() {
                     <div className="absolute bottom-4 left-4 right-4">
                       <div className="bg-black/70 backdrop-blur-sm rounded-lg p-3">
                         <h3 className="text-white font-semibold text-sm">
-                          How We Get You 10 Dental Appointments for Free
+                          How We Get You 10 Guaranteed Appointments in 28 Days
                         </h3>
                         <div className="flex items-center gap-4 mt-2 text-xs text-gray-300">
                           <span className="flex items-center gap-1">
@@ -110,37 +130,25 @@ export default function LandingMineaStyle() {
 
               {/* Right Column - Content */}
               <div className="space-y-6">
-                {/* Badge */}
-                <Badge className="bg-gray-100 text-gray-800 border-gray-200 text-sm px-4 py-2">
-                  <Star className="w-4 h-4 mr-2 fill-current" />
-                  #1 Practice Management Tool
-                </Badge>
-
-                {/* Main Headline */}
-                <h1 className="text-4xl md:text-6xl font-bold text-gray-900 leading-tight">
-                  Get 10 Dental Appointments
-                  <span className="block text-black">for Free</span>
-                </h1>
-
                 {/* Content */}
                 <div className="prose prose-lg max-w-none">
                   <p className="text-gray-700 leading-relaxed text-lg">
                     We invest <strong className="text-gray-900">$300 in targeted ads</strong> to guarantee your first 10 appointments
-                    at absolutely no cost to you. This practice management tool has been
-                    carefully designed to not just manage your practice, but to actively grow it
-                    from day one with real patients booking real appointments.
+                    within 28 days. You only pay for the ad spend - no setup fees, no contracts, no hidden costs.
+                    This practice management tool has been carefully designed to not just manage your practice,
+                    but to actively grow it from day one with real patients booking real appointments.
                   </p>
 
                   <p className="text-gray-700 leading-relaxed">
                     DentalFlow stands out because we put our money where our mouth is.
                     Instead of charging setup fees like other software companies, we
                     <strong className="text-gray-900"> invest in your success</strong> by running professional ad campaigns
-                    that bring qualified patients directly to your practice.
+                    that bring qualified patients directly to your practice within the first month.
                   </p>
 
                   <p className="text-gray-700 leading-relaxed">
                     The result? You get a <strong className="text-gray-900">powerful practice management system</strong> plus
-                    10 guaranteed appointments to start generating revenue immediately.
+                    10 guaranteed appointments within 28 days to start generating revenue immediately.
                     This combination of software and marketing makes DentalFlow the
                     <strong className="text-gray-900"> complete growth solution</strong> for dental practices.
                   </p>
@@ -152,16 +160,16 @@ export default function LandingMineaStyle() {
                     size="lg"
                     className="bg-black hover:bg-gray-800 text-white font-semibold px-8 py-4 text-lg rounded-lg"
                   >
-                    Get My 10 Free Appointments
+                    Get My 10 Guaranteed Appointments
                     <ArrowRight className="w-5 h-5 ml-2" />
                   </Button>
                 </div>
 
                 {/* Trust Indicators */}
-                <div className="flex items-center gap-6 text-sm text-gray-600 pt-2">
+                <div className="flex flex-wrap items-center gap-6 text-sm text-gray-600 pt-2">
                   <div className="flex items-center gap-2">
                     <CheckCircle className="w-4 h-4 text-green-600" />
-                    <span>$300 ad spend included</span>
+                    <span>Only pay $300 ad cost</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <CheckCircle className="w-4 h-4 text-green-600" />
@@ -169,7 +177,7 @@ export default function LandingMineaStyle() {
                   </div>
                   <div className="flex items-center gap-2">
                     <CheckCircle className="w-4 h-4 text-green-600" />
-                    <span>Appointments start day 1</span>
+                    <span>28-day guarantee</span>
                   </div>
                 </div>
               </div>
@@ -317,12 +325,12 @@ export default function LandingMineaStyle() {
           <div className="max-w-4xl mx-auto">
             <h2 className="text-4xl md:text-6xl font-bold text-white mb-6">
               Ready to get your
-              <span className="block text-white">10 free appointments?</span>
+              <span className="block text-white">10 guaranteed appointments?</span>
             </h2>
 
             <p className="text-xl text-gray-300 mb-12 max-w-2xl mx-auto">
               Join 2,500+ dental practices already growing with DentalFlow.
-              We'll invest $300 in ads to get you started.
+              You only cover the $300 ad cost - we handle the rest.
             </p>
 
             {/* CTA Buttons */}
@@ -331,7 +339,7 @@ export default function LandingMineaStyle() {
                 size="lg"
                 className="h-16 px-12 bg-white hover:bg-gray-100 text-black font-bold text-xl"
               >
-                Get My 10 Free Appointments
+                Get My 10 Guaranteed Appointments
                 <ArrowRight className="w-6 h-6 ml-3" />
               </Button>
               <Button
@@ -347,11 +355,11 @@ export default function LandingMineaStyle() {
             <div className="flex items-center justify-center gap-8 text-sm text-gray-400">
               <div className="flex items-center gap-2">
                 <CheckCircle className="w-4 h-4 text-green-400" />
-                <span>$300 ad spend included</span>
+                <span>Only pay $300 ad cost</span>
               </div>
               <div className="flex items-center gap-2">
                 <Shield className="w-4 h-4 text-green-400" />
-                <span>HIPAA compliant</span>
+                <span>28-day guarantee</span>
               </div>
               <div className="flex items-center gap-2">
                 <CheckCircle className="w-4 h-4 text-green-400" />

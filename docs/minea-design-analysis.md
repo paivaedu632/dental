@@ -175,10 +175,10 @@ Based on browser analysis of the Minea website, here are the key design elements
 
 ### **Variant D: Minea-Style**
 - **Route**: `/landing-minea-style`
-- **Focus**: Proven conversion design patterns
-- **Target Audience**: Practices responsive to modern, tech-forward design
-- **Key Differentiator**: Dark theme with gradient accents
-- **Expected Performance**: Higher engagement due to modern design
+- **Focus**: Free appointments offer with video demonstration
+- **Target Audience**: Practices seeking immediate patient acquisition
+- **Key Differentiator**: Black & white theme with video + content hero layout
+- **Expected Performance**: Higher conversion due to free appointments offer and video proof
 
 ### **Testing Hypothesis**
 Minea's proven conversion-optimized design structure will perform well for DentalFlow because:
