@@ -20,7 +20,7 @@ export default function MineaStyleLanding() {
               </div>
 
               {/* Main Headline - Exact Minea Typography: Mobile 48px/58px, Desktop 64px/76px */}
-              <h1 className="font-semibold text-gray-900 mb-6 lg:mb-8" style={{
+              <h1 className="font-semibold text-gray-900 mb-8 lg:mb-12" style={{
                 fontSize: 'clamp(48px, 5vw, 64px)',
                 lineHeight: 'clamp(58px, 6vw, 76px)',
                 fontFamily: 'Inter, "Inter Placeholder", sans-serif'
@@ -29,16 +29,7 @@ export default function MineaStyleLanding() {
                 <span className="block text-black">Appointments</span>
               </h1>
 
-              {/* Subheadline - Exact Minea Typography: Mobile 16px/24px, Desktop 18px/28px */}
-              <p className="text-gray-600 max-w-4xl mx-auto font-semibold mb-8" style={{
-                fontSize: 'clamp(16px, 2vw, 18px)',
-                lineHeight: 'clamp(24px, 3vw, 28px)',
-                fontFamily: 'Inter, "Inter Placeholder", sans-serif'
-              }}>
-                You only cover the $300 ad cost. No setup fees. No contracts. Just results.
-              </p>
-
-              {/* Trust Indicators - Typography matching subheadline exactly */}
+              {/* Trust Indicators - Positioned directly below headline */}
               <div className="flex flex-wrap items-center justify-center gap-6">
                 <div className="flex items-center gap-2">
                   <CheckCircle className="w-4 h-4 text-green-600" />
