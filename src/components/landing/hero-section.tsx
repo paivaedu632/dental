@@ -76,7 +76,7 @@ export function HeroSection() {
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="space-y-2">
                   <label htmlFor="email" className="text-sm font-medium text-gray-700">
-                    Start your free 14-day trial (no credit card required)
+                    Get 10 Guaranteed Appointments + Free 14-Day Trial
                   </label>
                   <div className="flex gap-3">
                     <Input
@@ -101,8 +101,8 @@ export function HeroSection() {
                 </div>
                 
                 <div className="flex items-center justify-between text-xs text-gray-500">
-                  <span>✓ Free 14-day trial</span>
-                  <span>✓ No setup fees</span>
+                  <span>✓ 10 guaranteed appointments</span>
+                  <span>✓ No setup fees ever</span>
                   <span>✓ Cancel anytime</span>
                 </div>
               </form>

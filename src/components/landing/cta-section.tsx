@@ -24,18 +24,18 @@ export function CTASection() {
   const benefits = [
     {
       icon: Clock,
-      title: '15-Minute Setup',
-      description: 'Get started today, not in 3 months'
+      title: '10 Guaranteed Appointments',
+      description: 'We invest $300 in TikTok ads for you'
     },
     {
       icon: Shield,
-      title: 'Risk-Free Trial',
+      title: 'No Setup Fees Ever',
       description: '14 days free, no credit card required'
     },
     {
       icon: Zap,
       title: 'Immediate Results',
-      description: 'See improvements in your first week'
+      description: 'Appointments start flowing day one'
     }
   ]
 
@@ -112,11 +112,11 @@ export function CTASection() {
                 <div className="flex items-center justify-center gap-6 text-xs text-blue-200">
                   <div className="flex items-center gap-1">
                     <CheckCircle className="w-3 h-3" />
-                    <span>Free 14-day trial</span>
+                    <span>10 guaranteed appointments</span>
                   </div>
                   <div className="flex items-center gap-1">
                     <CheckCircle className="w-3 h-3" />
-                    <span>No credit card required</span>
+                    <span>No setup fees ever</span>
                   </div>
                   <div className="flex items-center gap-1">
                     <CheckCircle className="w-3 h-3" />
@@ -175,9 +175,9 @@ export function CTASection() {
                 🎯 Our 30-Day Growth Guarantee
               </h3>
               <p className="text-blue-200 leading-relaxed">
-                If you don't see measurable improvements in your practice efficiency and patient satisfaction 
-                within 30 days, we'll refund your setup fee and help you transition back to your old system. 
-                That's how confident we are in DentalFlow.
+                If you don't get at least 10 appointments from our TikTok ad investment within 30 days,
+                we'll refund the entire $300 and let you keep using DentalFlow free for another month.
+                That's how confident we are in our ability to get you patients.
               </p>
             </div>
           </div>
@@ -188,7 +188,7 @@ export function CTASection() {
               ⚡ Limited Time: Get 3 months FREE when you start today
             </p>
             <p className="text-blue-300 text-sm mt-1">
-              Offer expires in 24 hours • Save $291 • No setup fees
+              Offer expires in 24 hours • Save $291 • Plus 10 guaranteed appointments
             </p>
           </div>
         </div>

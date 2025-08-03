@@ -50,8 +50,8 @@ export function UrgencyBanner() {
             <div className="hidden sm:block w-px h-6 bg-red-400" />
             
             <div className="flex items-center gap-2 text-sm sm:text-base">
-              <span className="font-medium">Get 3 months FREE when you start today!</span>
-              <span className="hidden md:inline">• Save $291 • No setup fees</span>
+              <span className="font-medium">Get 3 months FREE + 10 guaranteed appointments!</span>
+              <span className="hidden md:inline">• Save $291 • $300 ad spend included</span>
             </div>
           </div>
 
@@ -99,7 +99,7 @@ export function UrgencyBanner() {
             className="w-full bg-yellow-400 hover:bg-yellow-500 text-red-900 font-bold"
             onClick={() => window.open('/signup?promo=3MONTHS', '_blank')}
           >
-            Claim 3 Months FREE - Limited Time
+            Get 3 Months FREE + 10 Appointments
           </Button>
         </div>
       </div>

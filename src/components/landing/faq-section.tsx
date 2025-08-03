@@ -9,16 +9,20 @@ export function FAQSection() {
 
   const faqs = [
     {
-      question: "How quickly can we get started with DentalFlow?",
-      answer: "Most practices are up and running in 15-20 minutes. Our setup wizard guides you through the process, and we'll migrate your existing data for free. Unlike traditional software that takes months to implement, DentalFlow is designed for same-day deployment."
+      question: "How quickly can we get started and see appointments?",
+      answer: "Most practices are up and running in 15-20 minutes. Our setup wizard guides you through the process, and we'll migrate your existing data for free. We immediately launch your TikTok ad campaign to start generating your guaranteed 10 appointments. Unlike traditional software that takes months to implement, DentalFlow delivers patients on day one."
     },
     {
       question: "What happens to our existing patient data?",
       answer: "We handle all data migration for free as part of your setup. Our team will securely transfer your patient records, appointment history, and billing information from your current system. All data transfers are HIPAA compliant and encrypted."
     },
     {
-      question: "How does the usage-based pricing work?",
-      answer: "You pay a base fee of $97/month plus $50 for each appointment after your first 10 (which are free). For example, if you have 20 appointments in a month, you'd pay $97 + (10 × $50) = $597. There's a one-time $300 setup fee that includes your first 10 appointments."
+      question: "How does the guaranteed appointment model work?",
+      answer: "We invest $300 in TikTok ads to guarantee your first 10 appointments - this isn't a setup fee, it's 100% ad spend for your practice. You pay $97/month for the platform plus $50 for each appointment beyond the guaranteed 10. For example, if you get 20 appointments total, you'd pay $97 + (10 × $50) = $597/month. We take $0 of the $300 ad investment."
+    },
+    {
+      question: "Why do you invest in TikTok ads for us instead of charging setup fees?",
+      answer: "Traditional software companies charge setup fees that go into their pockets. We do the opposite - we invest that money directly into getting you patients through TikTok ads. This aligns our success with yours: we only make money when you get appointments. The $300 goes 100% to ad spend, and we guarantee it will generate at least 10 appointments for your practice."
     },
     {
       question: "Can we cancel anytime?",

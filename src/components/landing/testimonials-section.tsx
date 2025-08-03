@@ -31,15 +31,15 @@ export function TestimonialsSection() {
       location: 'Denver, CO',
       image: '/images/testimonials/michael-chen.jpg',
       rating: 5,
-      quote: "The setup was incredibly easy - we were up and running in 20 minutes. Our patients love the online booking, and we love getting paid faster.",
+      quote: "The setup was incredibly easy - we were up and running in 20 minutes. The guaranteed appointments started flowing immediately, and we love getting paid faster.",
       results: {
         setup: '20 minutes',
-        payments: '2x faster',
+        appointments: '10 guaranteed',
         satisfaction: '98%'
       },
       beforeAfter: {
-        before: 'Complex software taking months to implement',
-        after: 'Simple solution working in 20 minutes'
+        before: 'Complex software with expensive setup fees',
+        after: 'Simple solution with guaranteed patients from day one'
       }
     },
     {
@@ -48,15 +48,15 @@ export function TestimonialsSection() {
       location: 'Seattle, WA',
       image: '/images/testimonials/emily-rodriguez.jpg',
       rating: 5,
-      quote: "Best investment we've made. The patient communication features have improved our reviews, and the analytics help us make better business decisions.",
+      quote: "Best investment we've made. The guaranteed appointments got us started, and now the patient communication features keep them coming back.",
       results: {
         reviews: '+4.8 stars',
-        efficiency: '+35%',
-        decisions: 'Data-driven'
+        appointments: '10 guaranteed',
+        retention: '+35%'
       },
       beforeAfter: {
-        before: 'Poor patient communication and no insights',
-        after: '4.8-star reviews and clear business metrics'
+        before: 'Struggling to get new patients and expensive marketing',
+        after: 'Guaranteed appointments plus 4.8-star patient retention'
       }
     }
   ]

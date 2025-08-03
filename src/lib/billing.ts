@@ -10,12 +10,13 @@ import type {
 
 // Pricing configuration
 export const PRICING_CONFIG: PricingTier = {
-  name: "Usage-Based Plan",
-  setupFee: 300,
+  name: "Guaranteed Appointment Plan",
+  setupFee: 0, // No setup fees - we invest in ads instead
+  adSpendInvestment: 300, // 100% goes to TikTok ads
   monthlyBase: 97,
-  freeAppointments: 10,
+  guaranteedAppointments: 10,
   perAppointmentFee: 50,
-  description: "Pay only for the appointments you generate"
+  description: "We guarantee your first 10 appointments through our ad investment"
 }
 
 // Calculate billing for a specific month
@@ -25,21 +26,22 @@ export function calculateMonthlyBilling(
 ): BillingPeriod {
   const config = PRICING_CONFIG
   const currentDate = new Date()
-  
-  const setupFee = isFirstMonth ? config.setupFee : 0
-  const baseFee = isFirstMonth ? 0 : config.monthlyBase
-  
-  // Calculate usage fee (appointments over the free limit)
-  const billableAppointments = Math.max(0, appointmentCount - config.freeAppointments)
+
+  const adSpendInvestment = isFirstMonth ? config.adSpendInvestment : 0
+  const baseFee = config.monthlyBase
+
+  // Calculate usage fee (appointments over the guaranteed limit)
+  const billableAppointments = Math.max(0, appointmentCount - config.guaranteedAppointments)
   const usageFee = billableAppointments * config.perAppointmentFee
-  
-  const totalFee = setupFee + baseFee + usageFee
-  
+
+  const totalFee = adSpendInvestment + baseFee + usageFee
+
   return {
     month: currentDate.getMonth() + 1,
     year: currentDate.getFullYear(),
     appointmentCount,
-    setupFee,
+    setupFee: 0, // No setup fees
+    adSpendInvestment,
     baseFee,
     usageFee,
     totalFee,

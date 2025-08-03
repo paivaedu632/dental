@@ -6,9 +6,11 @@ import { ID, UUID, Status } from './common'
 // Core billing types
 export interface PricingTier {
   name: string
-  setupFee: number
+  setupFee: number // Always 0 - no setup fees
+  adSpendInvestment?: number // Investment in TikTok ads
   monthlyBase: number
-  freeAppointments: number
+  guaranteedAppointments: number // Appointments guaranteed from ad spend
+  freeAppointments?: number // Legacy field for compatibility
   perAppointmentFee: number
   description: string
 }
@@ -17,7 +19,8 @@ export interface BillingPeriod {
   month: number
   year: number
   appointmentCount: number
-  setupFee: number
+  setupFee: number // Always 0
+  adSpendInvestment?: number // First month ad investment
   baseFee: number
   usageFee: number
   totalFee: number

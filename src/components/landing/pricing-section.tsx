@@ -11,23 +11,23 @@ export function PricingSection() {
 
   // Calculate pricing based on usage-based model
   const calculatePricing = (appointments: number) => {
-    const setupFee = 300
+    const adSpendInvestment = 300  // 100% goes to TikTok ads for guaranteed appointments
     const baseFee = 97
-    const freeAppointments = 10
+    const guaranteedAppointments = 10
     const perAppointmentFee = 50
-    
-    const billableAppointments = Math.max(0, appointments - freeAppointments)
+
+    const billableAppointments = Math.max(0, appointments - guaranteedAppointments)
     const usageFee = billableAppointments * perAppointmentFee
     const monthlyTotal = baseFee + usageFee
-    
+
     return {
-      setupFee,
+      adSpendInvestment,
       baseFee,
       usageFee,
       monthlyTotal,
-      firstMonthTotal: setupFee + monthlyTotal,
+      firstMonthTotal: adSpendInvestment + monthlyTotal,
       billableAppointments,
-      freeAppointments: Math.min(appointments, freeAppointments)
+      guaranteedAppointments: Math.min(appointments, guaranteedAppointments)
     }
   }
 
@@ -77,11 +77,11 @@ export function PricingSection() {
             Simple, Fair Pricing
           </Badge>
           <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
-            Only Pay for What You Use
+            We Guarantee Your First 10 Appointments
           </h2>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            No hidden fees, no per-user charges, no long-term contracts. 
-            Just simple, usage-based pricing that grows with your practice.
+            No setup fees ever. We invest $300 in TikTok ads to guarantee your first 10 appointments.
+            You only pay our platform fee + additional appointments.
           </p>
         </div>
 
@@ -128,17 +128,17 @@ export function PricingSection() {
                     
                     <div className="space-y-3">
                       <div className="flex justify-between items-center">
-                        <span className="text-gray-600">Base Platform Fee</span>
+                        <span className="text-gray-600">Platform Fee</span>
                         <span className="font-semibold">${pricing.baseFee}/month</span>
                       </div>
-                      
+
                       <div className="flex justify-between items-center">
                         <span className="text-gray-600">
-                          First {pricing.freeAppointments} appointments
+                          First {pricing.guaranteedAppointments} appointments
                         </span>
-                        <span className="font-semibold text-green-600">FREE</span>
+                        <span className="font-semibold text-green-600">GUARANTEED</span>
                       </div>
-                      
+
                       {pricing.billableAppointments > 0 && (
                         <div className="flex justify-between items-center">
                           <span className="text-gray-600">
@@ -147,7 +147,7 @@ export function PricingSection() {
                           <span className="font-semibold">${pricing.usageFee}</span>
                         </div>
                       )}
-                      
+
                       <div className="border-t border-gray-200 pt-3">
                         <div className="flex justify-between items-center">
                           <span className="text-lg font-semibold text-gray-900">Monthly Total</span>
@@ -156,9 +156,9 @@ export function PricingSection() {
                           </span>
                         </div>
                       </div>
-                      
-                      <div className="text-sm text-gray-500 text-center">
-                        One-time setup fee: ${pricing.setupFee} (includes 10 free appointments)
+
+                      <div className="bg-blue-50 rounded-lg p-3 text-sm text-blue-800 text-center">
+                        <strong>No setup fees!</strong> We invest $300 in TikTok ads to guarantee your first 10 appointments
                       </div>
                     </div>
                   </div>
@@ -182,14 +182,14 @@ export function PricingSection() {
 
                   <div className="bg-blue-50 rounded-xl p-6 border border-blue-200">
                     <h5 className="font-semibold text-blue-900 mb-3">
-                      💡 Why This Pricing Works Better:
+                      💡 Why We Guarantee Appointments:
                     </h5>
                     <ul className="space-y-2 text-sm text-blue-800">
-                      <li>• No per-user fees (unlimited staff)</li>
-                      <li>• No long-term contracts</li>
-                      <li>• Scales with your practice growth</li>
-                      <li>• Predictable monthly costs</li>
-                      <li>• Cancel anytime</li>
+                      <li>• We invest $300 (100% ad spend) to get you patients</li>
+                      <li>• No setup fees or hidden costs</li>
+                      <li>• We only succeed when you get appointments</li>
+                      <li>• Unlimited staff access included</li>
+                      <li>• Cancel anytime, no contracts</li>
                     </ul>
                   </div>
 
@@ -261,12 +261,12 @@ export function PricingSection() {
                       <div className="text-xs text-gray-500">Usage-based</div>
                     </td>
                     <td className="px-6 py-4 text-center">
-                      <div className="font-semibold text-gray-900">${pricing.setupFee}</div>
-                      <div className="text-xs text-gray-500">One-time</div>
+                      <div className="font-semibold text-green-600">$0</div>
+                      <div className="text-xs text-gray-500">No setup fees</div>
                     </td>
                     <td className="px-6 py-4 text-center">
                       <div className="font-semibold text-green-600">15 minutes</div>
-                      <div className="text-xs text-gray-500">Same day</div>
+                      <div className="text-xs text-gray-500">+ 10 guaranteed appointments</div>
                     </td>
                     <td className="px-6 py-4 text-center">
                       <div className="font-semibold text-green-600">24/7</div>
