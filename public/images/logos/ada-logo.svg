@@ -5,12 +5,11 @@
       .logo-subtitle { font-family: 'Arial', sans-serif; font-weight: normal; fill: #4a5568; }
     </style>
   </defs>
-  
-  <!-- ADA Circle Logo -->
-  <circle cx="40" cy="40" r="30" fill="none" stroke="#2d3748" stroke-width="3"/>
-  <text x="40" y="48" text-anchor="middle" class="logo-text" font-size="18">ADA</text>
-  
-  <!-- Organization Name -->
-  <text x="85" y="30" class="logo-text" font-size="16">American Dental</text>
-  <text x="85" y="50" class="logo-text" font-size="16">Association</text>
+
+  <!-- Properly sized ADA Logo - Largest and most prominent -->
+  <text x="100" y="30" text-anchor="middle" class="logo-text" font-size="24">ADA</text>
+  <text x="100" y="50" text-anchor="middle" class="logo-subtitle" font-size="12">American Dental Association</text>
+
+  <!-- Decorative underline for emphasis -->
+  <rect x="70" y="58" width="60" height="2" fill="#2d3748"/>
 </svg>

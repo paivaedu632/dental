@@ -1,6 +1,5 @@
 'use client'
 
-import { useEffect, useState } from 'react'
 import Image from 'next/image'
 
 interface Publication {
@@ -19,14 +18,14 @@ const publications: Publication[] = [
   },
   {
     name: 'Dental Economics',
-    logo: '/images/logos/dental-economics-logo.svg', 
+    logo: '/images/logos/dental-economics-logo.svg',
     alt: 'Dental Economics Magazine Logo',
     size: 'medium'
   },
   {
     name: 'Dentistry Today',
     logo: '/images/logos/dentistry-today-logo.svg',
-    alt: 'Dentistry Today Magazine Logo', 
+    alt: 'Dentistry Today Magazine Logo',
     size: 'small'
   },
   {
@@ -44,18 +43,6 @@ const publications: Publication[] = [
 ]
 
 export function FeaturedInCarousel() {
-  const [currentIndex, setCurrentIndex] = useState(0)
-  const [isHovered, setIsHovered] = useState(false)
-
-  useEffect(() => {
-    if (isHovered) return
-
-    const interval = setInterval(() => {
-      setCurrentIndex((prevIndex) => (prevIndex + 1) % publications.length)
-    }, 3000) // Change every 3 seconds
-
-    return () => clearInterval(interval)
-  }, [isHovered])
 
   const getLogoSize = (size: string) => {
     switch (size) {
@@ -70,6 +57,22 @@ export function FeaturedInCarousel() {
     }
   }
 
+  const getCardPadding = (size: string) => {
+    switch (size) {
+      case 'large':
+        return 'p-8'
+      case 'medium':
+        return 'p-6'
+      case 'small':
+        return 'p-6'
+      default:
+        return 'p-6'
+    }
+  }
+
+  // Duplicate publications array for seamless infinite scroll
+  const duplicatedPublications = [...publications, ...publications]
+
   return (
     <section className="py-16 lg:py-20 bg-gray-50">
       <div className="container mx-auto px-6 lg:px-8">
@@ -83,26 +86,21 @@ export function FeaturedInCarousel() {
             </h2>
           </div>
 
-          {/* Carousel Container */}
-          <div 
-            className="relative overflow-hidden"
-            onMouseEnter={() => setIsHovered(true)}
-            onMouseLeave={() => setIsHovered(false)}
-          >
-            {/* Carousel Track */}
-            <div 
-              className="flex transition-transform duration-500 ease-in-out"
+          {/* Scrolling Marquee Container */}
+          <div className="relative overflow-hidden">
+            {/* Scrolling Track */}
+            <div
+              className="flex items-center space-x-16 animate-scroll"
               style={{
-                transform: `translateX(-${currentIndex * 100}%)`
+                width: 'calc(200% + 4rem)', // Account for duplicated content and spacing
               }}
             >
-              {publications.map((publication, index) => (
+              {duplicatedPublications.map((publication, index) => (
                 <div
                   key={index}
-                  className="w-full flex-shrink-0 flex items-center justify-center py-8"
+                  className="flex-shrink-0"
                 >
-                  <div className="flex items-center justify-center bg-white rounded-lg shadow-sm border border-gray-200 p-8 hover:shadow-md transition-shadow duration-300">
-                    {/* Actual logo images */}
+                  <div className={`flex items-center justify-center bg-white rounded-lg shadow-sm border border-gray-200 ${getCardPadding(publication.size)} hover:shadow-md transition-shadow duration-300`}>
                     <div className={`${getLogoSize(publication.size)} flex items-center justify-center`}>
                       <Image
                         src={publication.logo}
@@ -115,22 +113,6 @@ export function FeaturedInCarousel() {
                     </div>
                   </div>
                 </div>
-              ))}
-            </div>
-
-            {/* Carousel Indicators */}
-            <div className="flex justify-center mt-8 space-x-2">
-              {publications.map((_, index) => (
-                <button
-                  key={index}
-                  onClick={() => setCurrentIndex(index)}
-                  className={`w-2 h-2 rounded-full transition-colors duration-300 ${
-                    index === currentIndex 
-                      ? 'bg-gray-900' 
-                      : 'bg-gray-300 hover:bg-gray-400'
-                  }`}
-                  aria-label={`Go to slide ${index + 1}`}
-                />
               ))}
             </div>
           </div>
@@ -147,6 +129,26 @@ export function FeaturedInCarousel() {
           </div>
         </div>
       </div>
+
+      {/* CSS Animation Styles */}
+      <style jsx>{`
+        @keyframes scroll {
+          0% {
+            transform: translateX(0);
+          }
+          100% {
+            transform: translateX(-50%);
+          }
+        }
+
+        .animate-scroll {
+          animation: scroll 20s linear infinite;
+        }
+
+        .animate-scroll:hover {
+          animation-play-state: paused;
+        }
+      `}</style>
     </section>
   )
 }
