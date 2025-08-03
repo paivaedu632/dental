@@ -10,6 +10,7 @@ export const ROUTES = {
     LANDING_V2: '/landing-v2',           // High-converting version
     LANDING_MINIMAL: '/landing-minimal', // Simplicity-focused version
     LANDING_PREMIUM: '/landing-premium', // Premium/luxury version
+    LANDING_MINEA: '/landing-minea-style', // Minea-inspired design
   },
   // Authentication pages (standalone)
   AUTH: {

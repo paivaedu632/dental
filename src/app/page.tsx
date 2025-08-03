@@ -115,6 +115,9 @@ export default function Home() {
               <Button variant="outline" size="sm" asChild>
                 <Link href="/landing-premium">Premium Version</Link>
               </Button>
+              <Button variant="outline" size="sm" asChild>
+                <Link href="/landing-minea-style">Minea-Style Version</Link>
+              </Button>
             </div>
           </div>
         )}
