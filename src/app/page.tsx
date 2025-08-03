@@ -1,106 +1,62 @@
-import Link from "next/link"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import {
-  BarChart3,
-  Star,
-  ArrowRight
-} from "lucide-react"
+import React from 'react'
+import { Metadata } from 'next'
+import { HeroSection } from '@/components/landing/hero-section'
+import { FeaturesSection } from '@/components/landing/features-section'
+import { PricingSection } from '@/components/landing/pricing-section'
+import { TestimonialsSection } from '@/components/landing/testimonials-section'
+import { StatsSection } from '@/components/landing/stats-section'
+import { CTASection } from '@/components/landing/cta-section'
+import { FAQSection } from '@/components/landing/faq-section'
+import { TrustSection } from '@/components/landing/trust-section'
+import { UrgencyBanner } from '@/components/landing/urgency-banner'
+
+export const metadata: Metadata = {
+  title: 'DentalFlow - Modern Practice Management That Actually Works',
+  description: 'Stop losing money on complicated software. DentalFlow helps dental practices increase revenue by 40% with simple, powerful practice management. Try free for 14 days.',
+  keywords: 'dental practice management, dental software, appointment scheduling, billing software, dental practice growth',
+  openGraph: {
+    title: 'DentalFlow - Increase Your Practice Revenue by 40%',
+    description: 'The only dental practice management software that pays for itself. Join 2,500+ practices already growing with DentalFlow.',
+    images: ['/images/og-landing.jpg'],
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'DentalFlow - Modern Practice Management',
+    description: 'Stop losing money on complicated software. Try DentalFlow free for 14 days.',
+    images: ['/images/twitter-card.jpg'],
+  },
+}
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
-      {/* Header */}
-      <div className="container mx-auto px-4 py-6">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-              <BarChart3 className="size-4" />
-            </div>
-            <span className="font-semibold text-lg">Dental Analytics</span>
-          </div>
-          <div className="flex items-center gap-4">
-            <Button variant="outline" asChild>
-              <Link href="/signin">Sign In</Link>
-            </Button>
-            <Button asChild>
-              <Link href="/signup">Get Started</Link>
-            </Button>
-          </div>
-        </div>
-      </div>
+    <div className="min-h-screen bg-white">
+      {/* Urgency Banner */}
+      <UrgencyBanner />
 
       {/* Hero Section */}
-      <main className="container mx-auto px-4 py-16 text-center">
-        <div className="max-w-4xl mx-auto mb-8">
-          <Badge variant="secondary" className="gap-2 mb-6">
-            <Star className="h-4 w-4" />
-            Trusted by 2,500+ Dental Practices
-          </Badge>
+      <HeroSection />
 
-          <h1 className="text-4xl md:text-6xl font-bold text-foreground mb-6 leading-tight">
-            Grow Your Dental Practice with{" "}
-            <br className="hidden md:block" />
-            <span className="text-primary">Data-Driven Insights</span>
-          </h1>
+      {/* Trust Indicators */}
+      <TrustSection />
 
-          <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto mb-8 leading-relaxed">
-            Join thousands of dental professionals using our analytics platform to generate more appointments,
-            increase revenue, and optimize their marketing ROI with transparent, usage-based pricing.
-          </p>
+      {/* Stats Section */}
+      <StatsSection />
 
-          <div className="flex flex-col sm:flex-row gap-4 items-center justify-center">
-            <Button
-              size="lg"
-              asChild
-              className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-6 text-lg font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all duration-200 gap-2"
-            >
-              <Link href="/signup">
-                Start Free Trial
-                <ArrowRight className="h-4 w-4" />
-              </Link>
-            </Button>
-            <Button
-              size="lg"
-              variant="outline"
-              asChild
-              className="px-8 py-6 text-lg font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all duration-200"
-            >
-              <Link href="/signin">Sign In</Link>
-            </Button>
-          </div>
-        </div>
+      {/* Features Section */}
+      <FeaturesSection />
 
-        {/* Social Proof Section */}
-        <div className="flex flex-col md:flex-row items-center justify-center gap-8 md:gap-12 mt-16">
-          <div className="text-center">
-            <div className="text-2xl font-bold text-primary">2,500+</div>
-            <div className="text-muted-foreground">Dental Practices</div>
-          </div>
+      {/* Testimonials */}
+      <TestimonialsSection />
 
-          <div className="text-center">
-            <div className="text-2xl font-bold text-primary">$12M+</div>
-            <div className="text-muted-foreground">Revenue Generated</div>
-          </div>
+      {/* Pricing Section */}
+      <PricingSection />
 
-          <div className="text-center">
-            <div className="text-2xl font-bold text-primary">905%</div>
-            <div className="text-muted-foreground">Average ROI</div>
-          </div>
+      {/* FAQ Section */}
+      <FAQSection />
 
-          <div className="flex items-center gap-3">
-            <div className="flex items-center gap-1">
-              {[...Array(5)].map((_, i) => (
-                <Star
-                  key={i}
-                  className="w-4 h-4 fill-yellow-400 text-yellow-400"
-                />
-              ))}
-            </div>
-            <span className="text-sm font-medium text-foreground">4.9/5 Rating</span>
-          </div>
-        </div>
-      </main>
+      {/* Final CTA */}
+      <CTASection />
     </div>
-  );
+  )
 }
