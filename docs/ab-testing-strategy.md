@@ -32,6 +32,13 @@ We've set up multiple landing page variants to test different messaging approach
 - **Pricing**: Premium pricing ($297/month) with white-glove service
 - **Design**: Dark, luxurious, premium branding with gold accents
 
+### **Variant D**: `/landing-minea-style` - Proven Design Patterns
+- **Messaging**: "The Ultimate Practice Management Tool"
+- **Target Audience**: Tech-forward practices responsive to modern design
+- **Value Proposition**: Proven conversion-optimized design structure
+- **Pricing**: Standard model with modern presentation
+- **Design**: Dark gradient theme with purple/blue accents, inspired by Minea's proven patterns
+
 ## 🎯 Testing Hypotheses
 
 ### **Primary Hypothesis**
@@ -68,10 +75,11 @@ Different messaging approaches will resonate with different segments of dental p
 ## 🔧 Implementation Strategy
 
 ### **Traffic Distribution**
-- **Control (/)**: 40% - Analytics focus (current default)
-- **Variant A (/landing-v2)**: 30% - Guaranteed appointments
+- **Control (/)**: 35% - Analytics focus (current default)
+- **Variant A (/landing-v2)**: 25% - Guaranteed appointments
 - **Variant B (/landing-minimal)**: 20% - Simplicity focus
 - **Variant C (/landing-premium)**: 10% - Premium focus
+- **Variant D (/landing-minea-style)**: 10% - Proven design patterns
 
 ### **Audience Segmentation**
 Consider directing different traffic sources to different variants:
