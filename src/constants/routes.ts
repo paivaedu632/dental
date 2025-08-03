@@ -1,25 +1,38 @@
-// Route constants for DentalFlow dashboard
+// Route constants for DentalFlow application
 export const ROUTES = {
+  // Public/Marketing pages (standalone, no dashboard layout)
+  PUBLIC: {
+    HOME: '/',
+    PRICING: '/pricing',        // Public pricing page
+    ABOUT: '/about',
+    CONTACT: '/contact',        // Public contact page
+  },
+  // Authentication pages (standalone)
   AUTH: {
     SIGNUP: '/signup',
     SIGNIN: '/signin',
     ONBOARDING: '/onboarding',
   },
+  // Dashboard pages (with sidebar layout)
   DASHBOARD: {
-    ADS: '/ads',
+    // Core practice management
     APPOINTMENTS: '/appointments',
-    COMPETITORS: '/competitors',
-    CONTACT: '/contact',
-    LANDING_PAGE: '/landing-page',
-    PRICING: '/pricing',
-    PRODUCTS: '/products',
     SETTINGS: '/settings',
-    SHOPS: '/shops',
-    SUCCESS_RADAR: '/success-radar',
-    SUPPORT: '/support',
     USAGE: '/usage',
+    SUPPORT: '/support',        // Internal support dashboard
+
+    // Marketing/Analytics tools
+    ADS: '/ads',
+    COMPETITORS: '/competitors',
+    SUCCESS_RADAR: '/success-radar',
+    LANDING_PAGE: '/landing-page', // Internal landing page management
+
+    // E-commerce tools
+    PRODUCTS: '/products',
+    SHOPS: '/shops',
     VOICE_AGENT: '/voice-agent',
   },
+  // Legal pages (standalone)
   LEGAL: {
     TERMS: '/terms',
     PRIVACY: '/privacy',
@@ -27,27 +40,29 @@ export const ROUTES = {
 } as const
 
 // Route arrays for layout provider
+export const PUBLIC_ROUTES = Object.values(ROUTES.PUBLIC)
 export const AUTH_ROUTES = Object.values(ROUTES.AUTH)
 export const DASHBOARD_ROUTES = Object.values(ROUTES.DASHBOARD)
 export const LEGAL_ROUTES = Object.values(ROUTES.LEGAL)
 
-// Standalone routes that don't use dashboard layout
+// Standalone routes that don't use dashboard layout (public + auth + legal)
 export const STANDALONE_ROUTES = [
-  '/',
+  ...PUBLIC_ROUTES,
   ...AUTH_ROUTES,
   ...LEGAL_ROUTES
 ]
 
 // All valid routes
 export const ALL_ROUTES = [
-  '/',
+  ...PUBLIC_ROUTES,
   ...AUTH_ROUTES,
   ...DASHBOARD_ROUTES,
   ...LEGAL_ROUTES
 ]
 
 // Route type definitions
+export type PublicRoute = typeof ROUTES.PUBLIC[keyof typeof ROUTES.PUBLIC]
 export type AuthRoute = typeof ROUTES.AUTH[keyof typeof ROUTES.AUTH]
 export type DashboardRoute = typeof ROUTES.DASHBOARD[keyof typeof ROUTES.DASHBOARD]
 export type LegalRoute = typeof ROUTES.LEGAL[keyof typeof ROUTES.LEGAL]
-export type AppRoute = AuthRoute | DashboardRoute | LegalRoute | '/'
+export type AppRoute = PublicRoute | AuthRoute | DashboardRoute | LegalRoute
