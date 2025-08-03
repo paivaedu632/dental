@@ -1,0 +1,19 @@
+<svg width="160" height="50" viewBox="0 0 160 50" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <style>
+      .logo-text { font-family: 'Arial', sans-serif; font-weight: bold; fill: #2d3748; }
+      .logo-subtitle { font-family: 'Arial', sans-serif; font-weight: normal; fill: #4a5568; }
+    </style>
+  </defs>
+  
+  <!-- Magazine Title -->
+  <text x="10" y="20" class="logo-text" font-size="16">MODERN</text>
+  <text x="10" y="38" class="logo-text" font-size="16">DENTISTRY</text>
+  
+  <!-- Modern Design Element -->
+  <rect x="120" y="12" width="8" height="8" fill="#2d3748"/>
+  <rect x="130" y="16" width="8" height="8" fill="#4a5568"/>
+  <rect x="140" y="20" width="8" height="8" fill="#6b7280"/>
+  <rect x="120" y="26" width="8" height="8" fill="#6b7280"/>
+  <rect x="130" y="30" width="8" height="8" fill="#4a5568"/>
+</svg>

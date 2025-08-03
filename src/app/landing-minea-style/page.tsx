@@ -2,6 +2,7 @@
 
 import { Button } from "@/components/ui/button"
 import { CheckCircle, Play } from "lucide-react"
+import { FeaturedInCarousel } from "@/components/landing/featured-in-carousel"
 
 export default function MineaStyleLanding() {
   return (
@@ -20,7 +21,7 @@ export default function MineaStyleLanding() {
               </div>
 
               {/* Main Headline - Landing-v2 Typography: text-3xl sm:text-4xl font-bold */}
-              <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4 lg:mb-6">
+              <h1 className="text-3xl sm:text-5xl font-bold text-gray-900 mb-4 lg:mb-6">
                 We Guarantee Your First 10 Appointments
               </h1>
 
@@ -40,7 +41,7 @@ export default function MineaStyleLanding() {
                     fontSize: 'clamp(16px, 2vw, 18px)',
                     lineHeight: 'clamp(24px, 3vw, 28px)',
                     fontFamily: 'Inter, "Inter Placeholder", sans-serif'
-                  }}>No setup fees ever</span>
+                  }}>No hidden fees</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <CheckCircle className="w-4 h-4 text-green-600" />
@@ -48,7 +49,7 @@ export default function MineaStyleLanding() {
                     fontSize: 'clamp(16px, 2vw, 18px)',
                     lineHeight: 'clamp(24px, 3vw, 28px)',
                     fontFamily: 'Inter, "Inter Placeholder", sans-serif'
-                  }}>28-day guarantee</span>
+                  }}>30-day guarantee</span>
                 </div>
               </div>
             </div>
@@ -166,6 +167,9 @@ export default function MineaStyleLanding() {
           </div>
         </div>
       </section>
+
+      {/* Featured In Carousel */}
+      <FeaturedInCarousel />
     </div>
   )
 }

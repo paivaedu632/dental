@@ -1,0 +1,16 @@
+<svg width="200" height="80" viewBox="0 0 200 80" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <style>
+      .logo-text { font-family: 'Arial', sans-serif; font-weight: bold; fill: #2d3748; }
+      .logo-subtitle { font-family: 'Arial', sans-serif; font-weight: normal; fill: #4a5568; }
+    </style>
+  </defs>
+  
+  <!-- ADA Circle Logo -->
+  <circle cx="40" cy="40" r="30" fill="none" stroke="#2d3748" stroke-width="3"/>
+  <text x="40" y="48" text-anchor="middle" class="logo-text" font-size="18">ADA</text>
+  
+  <!-- Organization Name -->
+  <text x="85" y="30" class="logo-text" font-size="16">American Dental</text>
+  <text x="85" y="50" class="logo-text" font-size="16">Association</text>
+</svg>
