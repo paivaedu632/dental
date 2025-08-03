@@ -30,13 +30,41 @@ export default function MineaStyleLanding() {
               </h1>
 
               {/* Subheadline - Exact Minea Typography: Mobile 16px/24px, Desktop 18px/28px */}
-              <p className="text-gray-600 max-w-4xl mx-auto font-semibold" style={{
+              <p className="text-gray-600 max-w-4xl mx-auto font-semibold mb-8" style={{
                 fontSize: 'clamp(16px, 2vw, 18px)',
                 lineHeight: 'clamp(24px, 3vw, 28px)',
                 fontFamily: 'Inter, "Inter Placeholder", sans-serif'
               }}>
                 You only cover the $300 ad cost. No setup fees. No contracts. Just results.
               </p>
+
+              {/* Trust Indicators - Moved from content section to headline section */}
+              <div className="flex flex-wrap items-center justify-center gap-6">
+                <div className="flex items-center gap-2">
+                  <CheckCircle className="w-4 h-4 text-green-600" />
+                  <span className="text-gray-600" style={{
+                    fontSize: '14px',
+                    fontFamily: 'Inter, "Inter Placeholder", sans-serif',
+                    fontWeight: '500'
+                  }}>Only pay $300 ad cost</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <CheckCircle className="w-4 h-4 text-green-600" />
+                  <span className="text-gray-600" style={{
+                    fontSize: '14px',
+                    fontFamily: 'Inter, "Inter Placeholder", sans-serif',
+                    fontWeight: '500'
+                  }}>No setup fees ever</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <CheckCircle className="w-4 h-4 text-green-600" />
+                  <span className="text-gray-600" style={{
+                    fontSize: '14px',
+                    fontFamily: 'Inter, "Inter Placeholder", sans-serif',
+                    fontWeight: '500'
+                  }}>28-day guarantee</span>
+                </div>
+              </div>
             </div>
 
             {/* Video + Content Layout - Optimized Spacing */}
@@ -146,34 +174,6 @@ export default function MineaStyleLanding() {
                   >
                     Start My Free Trial
                   </Button>
-                </div>
-
-                {/* Trust Indicators - Minea Typography */}
-                <div className="flex flex-wrap items-center gap-6 pt-6">
-                  <div className="flex items-center gap-2">
-                    <CheckCircle className="w-4 h-4 text-green-600" />
-                    <span className="text-gray-600" style={{
-                      fontSize: '14px',
-                      fontFamily: 'Inter, "Inter Placeholder", sans-serif',
-                      fontWeight: '500'
-                    }}>Only pay $300 ad cost</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <CheckCircle className="w-4 h-4 text-green-600" />
-                    <span className="text-gray-600" style={{
-                      fontSize: '14px',
-                      fontFamily: 'Inter, "Inter Placeholder", sans-serif',
-                      fontWeight: '500'
-                    }}>No setup fees ever</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <CheckCircle className="w-4 h-4 text-green-600" />
-                    <span className="text-gray-600" style={{
-                      fontSize: '14px',
-                      fontFamily: 'Inter, "Inter Placeholder", sans-serif',
-                      fontWeight: '500'
-                    }}>28-day guarantee</span>
-                  </div>
                 </div>
               </div>
             </div>
