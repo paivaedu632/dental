@@ -64,16 +64,17 @@ export default function LandingMineaStyle() {
           <div className="max-w-7xl mx-auto">
             {/* Centered Header Content */}
             <div className="text-center mb-16">
-              {/* Badge */}
-              <Badge className="bg-gray-100 text-gray-800 border-gray-200 text-sm px-4 py-2 mb-6">
-                <Star className="w-4 h-4 mr-2 fill-current" />
-                Free Trial
-              </Badge>
+              {/* Attention Badge */}
+              <div className="bg-black text-white px-6 py-3 rounded-lg inline-block mb-8">
+                <span className="text-sm md:text-base font-bold tracking-wide">
+                  ATTENTION DENTISTS & DENTAL PRACTICE OWNERS:
+                </span>
+              </div>
 
-              {/* Main Headline */}
-              <h1 className="text-4xl md:text-6xl font-bold text-gray-900 leading-tight mb-6">
-                Get 10 Guaranteed Dental Appointments
-                <span className="block text-black">in 28 days</span>
+              {/* Main Headline - Minea Typography Scale */}
+              <h1 className="text-5xl md:text-7xl font-bold text-gray-900 leading-tight mb-6">
+                Free Trial: 10 Guaranteed
+                <span className="block text-black">Appointments</span>
               </h1>
 
               {/* Subheadline */}
@@ -103,7 +104,7 @@ export default function LandingMineaStyle() {
                     <div className="absolute bottom-4 left-4 right-4">
                       <div className="bg-black/70 backdrop-blur-sm rounded-lg p-3">
                         <h3 className="text-white font-semibold text-sm">
-                          How We Get You 10 Guaranteed Appointments in 28 Days
+                          Free Trial: How We Get You 10 Guaranteed Appointments
                         </h3>
                         <div className="flex items-center gap-4 mt-2 text-xs text-gray-300">
                           <span className="flex items-center gap-1">
@@ -160,7 +161,7 @@ export default function LandingMineaStyle() {
                     size="lg"
                     className="bg-black hover:bg-gray-800 text-white font-semibold px-8 py-4 text-lg rounded-lg"
                   >
-                    Get My 10 Guaranteed Appointments
+                    Start My Free Trial
                     <ArrowRight className="w-5 h-5 ml-2" />
                   </Button>
                 </div>
@@ -324,8 +325,8 @@ export default function LandingMineaStyle() {
         <div className="container mx-auto px-4 text-center">
           <div className="max-w-4xl mx-auto">
             <h2 className="text-4xl md:text-6xl font-bold text-white mb-6">
-              Ready to get your
-              <span className="block text-white">10 guaranteed appointments?</span>
+              Ready to start your
+              <span className="block text-white">free trial?</span>
             </h2>
 
             <p className="text-xl text-gray-300 mb-12 max-w-2xl mx-auto">
@@ -339,7 +340,7 @@ export default function LandingMineaStyle() {
                 size="lg"
                 className="h-16 px-12 bg-white hover:bg-gray-100 text-black font-bold text-xl"
               >
-                Get My 10 Guaranteed Appointments
+                Start My Free Trial
                 <ArrowRight className="w-6 h-6 ml-3" />
               </Button>
               <Button
