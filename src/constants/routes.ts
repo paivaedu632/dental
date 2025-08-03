@@ -6,6 +6,10 @@ export const ROUTES = {
     PRICING: '/pricing',        // Public pricing page
     ABOUT: '/about',
     CONTACT: '/contact',        // Public contact page
+    // A/B Testing Landing Page Variants
+    LANDING_V2: '/landing-v2',           // High-converting version
+    LANDING_MINIMAL: '/landing-minimal', // Simplicity-focused version
+    LANDING_PREMIUM: '/landing-premium', // Premium/luxury version
   },
   // Authentication pages (standalone)
   AUTH: {
