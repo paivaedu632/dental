@@ -1,0 +1,243 @@
+{
+  "business_id": "dentist_456_denver",
+  "analysis_timestamp": "2025-01-15T16:45:00Z",
+  "business_info": {
+    "name": "Denver Family Dentistry",
+    "gmb_place_id": "ChIJXxY123abc456def",
+    "category": "dentist",
+    "location": {
+      "address": "789 Cherry Creek Dr, Denver, CO 80209",
+      "neighborhood": "Cherry Creek",
+      "city": "Denver",
+      "market_type": "urban_affluent"
+    },
+    "contact": {
+      "phone": "+1-303-555-0789",
+      "website": "https://denverfamilydentistry.com",
+      "gmb_listing_url": "https://goo.gl/maps/xyz123"
+    }
+  },
+  "data_collection": {
+    "source": "google_my_business",
+    "collection_period": "30_days",
+    "data_points_collected": 47,
+    "last_updated": "2025-01-15T16:30:00Z",
+    "collection_method": "automated_scraping",
+    "data_quality": "high"
+  },
+  "raw_gmb_metrics": {
+    "visibility": {
+      "profile_views_30d": 1850,
+      "search_appearances": 3200,
+      "map_views": 1240,
+      "listing_photos_viewed": 4100
+    },
+    "engagement": {
+      "phone_calls_30d": 89,
+      "direction_requests_30d": 156,
+      "website_clicks_30d": 67,
+      "message_conversations_30d": 12
+    },
+    "reputation": {
+      "total_reviews": 127,
+      "average_rating": 4.6,
+      "reviews_last_30d": 6,
+      "five_star_reviews_30d": 5,
+      "response_rate": 0.83,
+      "avg_response_time_hours": 4.2
+    },
+    "content_performance": {
+      "photos_uploaded_30d": 8,
+      "posts_published_30d": 4,
+      "questions_answered": 23,
+      "business_updates": 2
+    }
+  },
+  "conversion_analysis": {
+    "methodology": {
+      "industry": "dental_practices",
+      "benchmark_source": "dental_marketing_report_2024",
+      "conversion_model": "gmb_dental_v1.2",
+      "confidence_level": 0.78
+    },
+    "conversion_rates": {
+      "phone_call_to_appointment": {
+        "rate": 0.72,
+        "industry_benchmark": "0.65-0.80",
+        "confidence": 0.85,
+        "factors": ["high_rating", "quick_response", "established_practice"]
+      },
+      "direction_request_to_visit": {
+        "rate": 0.22,
+        "industry_benchmark": "0.15-0.30",
+        "confidence": 0.70,
+        "factors": ["affluent_area", "good_parking"]
+      },
+      "website_click_to_inquiry": {
+        "rate": 0.12,
+        "industry_benchmark": "0.08-0.18",
+        "confidence": 0.65,
+        "factors": ["modern_website", "online_booking"]
+      },
+      "message_to_appointment": {
+        "rate": 0.58,
+        "industry_benchmark": "0.45-0.70",
+        "confidence": 0.75,
+        "factors": ["fast_response_time"]
+      }
+    }
+  },
+  "lead_estimates": {
+    "total_monthly_leads": {
+      "estimate": 108,
+      "confidence_range": {
+        "low": 89,
+        "high": 131
+      },
+      "calculation_breakdown": {
+        "phone_calls": 64,
+        "walk_ins_from_directions": 34,
+        "website_inquiries": 8,
+        "message_leads": 7
+      }
+    },
+    "lead_sources_breakdown": {
+      "phone_calls": {
+        "raw_calls": 89,
+        "estimated_appointments": 64,
+        "conversion_rate": 0.72,
+        "percentage_of_total": 0.59
+      },
+      "walk_ins": {
+        "direction_requests": 156,
+        "estimated_visits": 34,
+        "visit_to_appointment_rate": 0.22,
+        "percentage_of_total": 0.31
+      },
+      "website_inquiries": {
+        "website_clicks": 67,
+        "estimated_inquiries": 8,
+        "conversion_rate": 0.12,
+        "percentage_of_total": 0.07
+      },
+      "messages": {
+        "message_conversations": 12,
+        "estimated_appointments": 7,
+        "conversion_rate": 0.58,
+        "percentage_of_total": 0.06
+      }
+    }
+  },
+  "appointment_estimates": {
+    "total_monthly_appointments": {
+      "new_patients": 43,
+      "existing_patients": 65,
+      "total": 108
+    },
+    "appointment_types": {
+      "routine_cleaning": {
+        "estimate": 38,
+        "percentage": 0.35,
+        "avg_revenue": 180
+      },
+      "new_patient_exam": {
+        "estimate": 25,
+        "percentage": 0.23,
+        "avg_revenue": 220
+      },
+      "restorative_work": {
+        "estimate": 22,
+        "percentage": 0.20,
+        "avg_revenue": 650
+      },
+      "cosmetic_consultation": {
+        "estimate": 15,
+        "percentage": 0.14,
+        "avg_revenue": 450
+      },
+      "emergency_visit": {
+        "estimate": 8,
+        "percentage": 0.07,
+        "avg_revenue": 320
+      }
+    }
+  },
+  "revenue_projections": {
+    "monthly_revenue_estimate": {
+      "total": 41840,
+      "currency": "USD",
+      "confidence_range": {
+        "low": 34500,
+        "high": 50200
+      }
+    },
+    "revenue_by_service": {
+      "routine_cleaning": 6840,
+      "new_patient_exams": 5500,
+      "restorative_work": 14300,
+      "cosmetic_services": 6750,
+      "emergency_visits": 2560,
+      "other_services": 5890
+    },
+    "key_metrics": {
+      "average_appointment_value": 387,
+      "new_patient_value": 520,
+      "patient_lifetime_value": 3200
+    }
+  },
+  "performance_indicators": {
+    "gmb_health_score": 8.2,
+    "local_visibility_rank": "high",
+    "conversion_efficiency": "above_average",
+    "reputation_strength": "excellent",
+    "growth_trajectory": "stable_positive"
+  },
+  "competitive_context": {
+    "local_market_position": {
+      "estimated_rank": 2,
+      "total_dentists_in_area": 18,
+      "market_share_estimate": 0.12
+    },
+    "performance_vs_peers": {
+      "gmb_engagement": "top_25_percent",
+      "review_velocity": "average",
+      "response_rate": "above_average",
+      "content_activity": "below_average"
+    }
+  },
+  "insights_and_opportunities": {
+    "strengths": [
+      "Excellent rating (4.6/5) builds trust",
+      "Strong phone call conversion rate",
+      "Good response time to messages",
+      "High-value service area"
+    ],
+    "improvement_opportunities": [
+      "Increase GMB post frequency (currently 4/month)",
+      "Add more patient before/after photos",
+      "Optimize for more direction requests",
+      "Consider adding online booking widget"
+    ],
+    "risk_factors": [
+      "Competitor 'Mile High Dental' gaining reviews faster",
+      "Limited content marketing activity",
+      "No recent GMB updates about new services"
+    ]
+  },
+  "data_confidence": {
+    "overall_confidence": 0.78,
+    "confidence_factors": {
+      "data_completeness": 0.92,
+      "benchmark_accuracy": 0.75,
+      "market_knowledge": 0.70,
+      "conversion_model_reliability": 0.82
+    },
+    "validation_notes": [
+      "Phone call data verified through multiple scraping sessions",
+      "Conversion rates based on 2024 dental industry benchmarks",
+      "Revenue estimates use local Denver pricing data",
+      "Competition analysis limited to 3-mile radius"
+    ]
+  },
+  "next_update": "2025-01-16T16:45:00Z"
+}
