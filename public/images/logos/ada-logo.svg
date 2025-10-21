@@ -1,0 +1,15 @@
+<svg width="170" height="65" viewBox="0 0 170 65" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <style>
+      .logo-text { font-family: 'Arial', sans-serif; font-weight: bold; fill: #2d3748; }
+      .logo-subtitle { font-family: 'Arial', sans-serif; font-weight: normal; fill: #4a5568; }
+    </style>
+  </defs>
+
+  <!-- Proportionally balanced ADA Logo - Largest but not overwhelming -->
+  <text x="85" y="25" text-anchor="middle" class="logo-text" font-size="18">ADA</text>
+  <text x="85" y="40" text-anchor="middle" class="logo-subtitle" font-size="10">American Dental Association</text>
+
+  <!-- Decorative underline for emphasis -->
+  <rect x="65" y="48" width="40" height="2" fill="#2d3748"/>
+</svg>

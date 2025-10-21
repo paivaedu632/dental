@@ -1,0 +1,25 @@
+<svg width="140" height="50" viewBox="0 0 140 50" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <style>
+      .logo-text { font-family: 'Arial', sans-serif; font-weight: bold; fill: #2d3748; }
+      .logo-subtitle { font-family: 'Arial', sans-serif; font-weight: normal; fill: #4a5568; }
+    </style>
+  </defs>
+  
+  <!-- AGD Logo based on official design -->
+  <!-- Stylized A with colored stripes -->
+  <g>
+    <!-- A shape outline -->
+    <path d="M10 35 L15 15 L20 15 L25 35 L22 35 L21 30 L14 30 L13 35 Z M15.5 25 L19.5 25 L17.5 20 Z" fill="#6b7280"/>
+    <!-- Colored horizontal stripes in the A -->
+    <rect x="15.5" y="22" width="4" height="1.5" fill="#6b7280"/>
+    <rect x="15.5" y="24" width="4" height="1.5" fill="#3b82f6"/>
+    <rect x="15.5" y="26" width="4" height="1.5" fill="#f97316"/>
+  </g>
+  
+  <!-- AGD text -->
+  <text x="35" y="25" class="logo-text" font-size="16">AGD</text>
+  
+  <!-- Academy of General Dentistry subtitle -->
+  <text x="35" y="40" class="logo-subtitle" font-size="10">Academy of General Dentistry</text>
+</svg>

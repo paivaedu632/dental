@@ -1,0 +1,15 @@
+<svg width="160" height="50" viewBox="0 0 160 50" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <style>
+      .logo-text { font-family: 'Arial', sans-serif; font-weight: bold; fill: #2d3748; }
+      .logo-subtitle { font-family: 'Arial', sans-serif; font-weight: normal; fill: #4a5568; }
+    </style>
+  </defs>
+  
+  <!-- Magazine Title -->
+  <text x="10" y="20" class="logo-text" font-size="16">DENTISTRY</text>
+  <text x="10" y="38" class="logo-text" font-size="16">TODAY</text>
+  
+  <!-- Tooth Icon -->
+  <path d="M130 15 C135 10, 145 10, 150 15 C150 20, 148 25, 145 28 C142 25, 138 25, 135 28 C132 25, 130 20, 130 15 Z" fill="#4a5568"/>
+</svg>
