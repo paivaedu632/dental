@@ -563,7 +563,7 @@ const ActionButtons = ({
       ) : step === 5 ? (
         '🚀 Yes, Launch My Ads'
       ) : (
-        'Continue'
+        'Next'
       )}
     </Button>
 
