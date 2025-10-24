@@ -1,17 +1,16 @@
-
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { Progress } from '@/components/ui/progress'
 import { Button } from '@/components/ui/button'
-import { Stethoscope, Check } from 'lucide-react'
+import { Stethoscope, Check, Camera, Upload, X } from 'lucide-react'
 
 // ============================================================================
 // TYPES
 // ============================================================================
 
-type Step = 0 | 1 | 2 | 3 | 4 | 5 | 6
+type Step = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7
 
 type AvailableDays = {
   M: boolean
@@ -35,6 +34,8 @@ type FormData = {
   offerType: 'standard' | 'custom'
   customServiceName: string
   customPrice: string
+  photoFile: File | null
+  photoPreview: string | null
   availableDays: AvailableDays
   startTime: string
   endTime: string
@@ -49,13 +50,13 @@ type FormData = {
 // CONSTANTS
 // ============================================================================
 
-const TOTAL_STEPS = 7
+const TOTAL_STEPS = 8
 const LAUNCH_DELAY_MS = 2000
-const SUCCESS_REDIRECT_DELAY_MS = 3000
 
 const TIMER_MESSAGES = [
   'Complete in 2 minutes',
   '60s left to launch your ads',
+  '45s left to launch your ads',
   '30s left to launch your ads',
   '30s left to launch your ads',
   'Final step',
@@ -68,6 +69,7 @@ const STEP_NAMES = [
   'address',
   'contact',
   'services',
+  'photo',
   'availability',
   'review',
   'success',
@@ -119,7 +121,9 @@ const DEFAULT_FORM_DATA: FormData = {
   phone: '',
   offerType: 'standard',
   customServiceName: '',
-  customPrice: '79',
+  customPrice: '97',
+  photoFile: null,
+  photoPreview: null,
   availableDays: DEFAULT_AVAILABLE_DAYS,
   startTime: '9:00 AM',
   endTime: '5:00 PM',
@@ -228,6 +232,8 @@ const isStepValid = (step: Step, formData: Partial<FormData>): boolean => {
       return formData.offerType === 'standard' ||
         ((formData.customServiceName?.trim().length ?? 0) > 0 && isValidPrice(formData.customPrice ?? ''))
     case 4:
+      return formData.photoFile !== null
+    case 5:
       const hasDaysSelected = Object.values(formData.availableDays ?? {}).some(Boolean)
       const maxPatientsNum = parseInt(formData.maxNewPatients ?? '0', 10)
       return (
@@ -237,7 +243,7 @@ const isStepValid = (step: Step, formData: Partial<FormData>): boolean => {
         Number.isFinite(maxPatientsNum) &&
         maxPatientsNum > 0
       )
-    case 5:
+    case 6:
       return formData.agreeTerms === true
     default:
       return true
@@ -252,7 +258,8 @@ const STORAGE_KEY = 'dentalflow_onboarding'
 
 const saveToLocalStorage = (data: Partial<FormData> & { step: Step }): void => {
   try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(data))
+    const { photoFile, ...saveableData } = data
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(saveableData))
   } catch (e) {
     console.error('Failed to save progress', e)
   }
@@ -272,245 +279,108 @@ const clearLocalStorage = (): void => {
   try {
     localStorage.removeItem(STORAGE_KEY)
   } catch (e) {
-    console.error('Failed to clear storage', e)
+    console.error('Failed to clear saved progress', e)
   }
 }
 
 // ============================================================================
-// UTILITIES - ANALYTICS
+// ANALYTICS
 // ============================================================================
 
-const trackStepView = (step: Step): void => {
-  if (typeof window !== 'undefined' && 'gtag' in window) {
+const trackStepView = (step: Step) => {
+  if (typeof window !== 'undefined' && (window as any).gtag) {
     (window as any).gtag('event', 'onboarding_step_view', {
-      step_number: step,
+      step: step,
       step_name: STEP_NAMES[step],
     })
   }
 }
 
-const trackStepComplete = (step: Step): void => {
-  if (typeof window !== 'undefined' && 'gtag' in window) {
+const trackStepComplete = (step: Step) => {
+  if (typeof window !== 'undefined' && (window as any).gtag) {
     (window as any).gtag('event', 'onboarding_step_complete', {
-      step_number: step,
+      step: step,
       step_name: STEP_NAMES[step],
     })
   }
 }
 
-const trackOnboardingComplete = (): void => {
-  if (typeof window !== 'undefined' && 'gtag' in window) {
-    (window as any).gtag('event', 'onboarding_complete')
+const trackOnboardingComplete = () => {
+  if (typeof window !== 'undefined' && (window as any).gtag) {
+    (window as any).gtag('event', 'onboarding_complete', {
+      value: 500,
+    })
   }
 }
 
 // ============================================================================
-// COMPONENTS - ANIMATIONS
+// CUSTOM HOOKS
 // ============================================================================
 
-const ConfettiAnimation = () => (
-  <div className="confetti-container" aria-hidden="true">
-    {Array.from({ length: 60 }).map((_, i) => {
-      const left = Math.random() * 100
-      const delay = Math.random() * 300
-      const duration = 1600 + Math.random() * 600
-      const colors = ['#FF3B3B', '#FFB302', '#22C55E', '#3B82F6', '#A855F7']
-      const color = colors[i % colors.length]
-      const size = 6 + Math.random() * 6
-      const rotate = Math.random() * 360
-      return (
-        <span
-          key={i}
-          className="confetti-piece"
-          style={{
-            left: `${left}%`,
-            animationDelay: `${delay}ms`,
-            animationDuration: `${duration}ms`,
-            backgroundColor: color,
-            width: `${size}px`,
-            height: `${size * 2}px`,
-            ['--rotate' as any]: `${rotate}deg`,
-          }}
-        />
-      )
-    })}
-    <style jsx>{`
-      .confetti-container {
-        position: fixed;
-        pointer-events: none;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        overflow: hidden;
-        z-index: 50;
+const useFormPersistence = (step: Step, formData: Partial<FormData>) => {
+  useEffect(() => {
+    if (step < 7) {
+      saveToLocalStorage({ ...formData, step })
+    }
+  }, [step, formData])
+}
+
+const useNavigationGuard = (
+  step: Step,
+  isLeavingConfirmed: boolean,
+  setShowLeaveConfirm: (value: boolean) => void
+) => {
+  useEffect(() => {
+    if (step >= 7 || isLeavingConfirmed) return
+
+    const handlePopState = (e: PopStateEvent) => {
+      if (!isLeavingConfirmed) {
+        e.preventDefault()
+        setShowLeaveConfirm(true)
+        history.pushState({ guard: 'onboarding' }, '', window.location.href)
       }
-      .confetti-piece {
-        position: absolute;
-        top: -10px;
-        border-radius: 2px;
-        opacity: 0.9;
-        animation-name: confetti-fall, confetti-sway;
-        animation-timing-function: linear;
-        animation-fill-mode: forwards;
+    }
+
+    history.pushState({ guard: 'onboarding' }, '', window.location.href)
+    window.addEventListener('popstate', handlePopState)
+
+    return () => {
+      window.removeEventListener('popstate', handlePopState)
+    }
+  }, [step, isLeavingConfirmed, setShowLeaveConfirm])
+}
+
+const useAnalytics = (step: Step) => {
+  useEffect(() => {
+    trackStepView(step)
+  }, [step])
+}
+
+const useKeyboardShortcuts = (
+  step: Step,
+  isStepValid: boolean,
+  onContinue: () => void,
+  onBack: () => void
+) => {
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Enter' && isStepValid && step !== 6) {
+        e.preventDefault()
+        onContinue()
       }
-      @keyframes confetti-fall {
-        0% { transform: translateY(-10px) rotate(var(--rotate)); }
-        100% { transform: translateY(100vh) rotate(calc(var(--rotate) + 720deg)); }
+      if (e.key === 'Escape' && step > 0 && step < 7) {
+        e.preventDefault()
+        onBack()
       }
-      @keyframes confetti-sway {
-        0% { margin-left: 0; }
-        50% { margin-left: 12px; }
-        100% { margin-left: 0; }
-      }
-    `}</style>
-  </div>
-)
+    }
+
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [step, isStepValid, onContinue, onBack])
+}
 
 // ============================================================================
-// COMPONENTS - MODALS
-// ============================================================================
-
-const LeaveConfirmModal = ({
-  onStay,
-  onLeave,
-}: {
-  onStay: () => void
-  onLeave: () => void
-}) => (
-  <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-    <div className="w-full max-w-md rounded-lg bg-white p-6 text-center shadow-lg">
-      <div className="text-3xl mb-2" aria-hidden="true">⚠️</div>
-      <h2 className="text-xl font-semibold mb-2">Leave this page?</h2>
-      <p className="text-sm text-muted-foreground">You haven't finished setting up your ads.</p>
-      <p className="mt-2 text-sm text-muted-foreground">
-        Your progress is saved — you can come back anytime, but your trial won't be activated until you complete setup.
-      </p>
-      <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-3">
-        <Button className="w-full" onClick={onStay}>
-          Stay & Finish (60s left)
-        </Button>
-        <Button variant="outline" className="w-full" onClick={onLeave}>
-          Leave Page
-        </Button>
-      </div>
-    </div>
-  </div>
-)
-
-// ============================================================================
-// COMPONENTS - FORM INPUTS
-// ============================================================================
-
-const FormInput = ({
-  id,
-  label,
-  type = 'text',
-  value,
-  onChange,
-  placeholder,
-  autoComplete,
-  inputMode,
-  pattern,
-  error,
-  hint,
-  required = true,
-  inputRef,
-  onKeyDown,
-  prefix,
-}: {
-  id: string
-  label: string
-  type?: string
-  value: string
-  onChange: (value: string) => void
-  placeholder?: string
-  autoComplete?: string
-  inputMode?: 'text' | 'numeric' | 'tel' | 'email' | 'decimal'
-  pattern?: string
-  error?: string
-  hint?: string
-  required?: boolean
-  inputRef?: React.RefObject<HTMLInputElement>
-  onKeyDown?: (e: React.KeyboardEvent) => void
-  prefix?: string
-}) => (
-  <div>
-    {label && (
-      <label htmlFor={id} className="block text-black text-sm font-bold mb-2">
-        {label}
-      </label>
-    )}
-    <div className="relative">
-      {prefix && (
-        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[#2e2e2e]">
-          {prefix}
-        </span>
-      )}
-      <input
-        ref={inputRef}
-        type={type}
-        id={id}
-        name={id}
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        placeholder={placeholder}
-        autoComplete={autoComplete}
-        inputMode={inputMode}
-        pattern={pattern}
-        aria-invalid={!!error}
-        aria-describedby={hint ? `${id}-hint` : undefined}
-        onKeyDown={onKeyDown}
-        className={`w-full ${prefix ? 'pl-6' : 'pl-4'} pr-4 py-3 text-base border border-black rounded-lg focus:border-2 focus:border-black focus:outline-none transition-all duration-150 ease-in-out bg-white min-h-[44px]`}
-        required={required}
-      />
-    </div>
-    {hint && !error && (
-      <p id={`${id}-hint`} className="mt-2 text-[#2e2e2e] text-sm">
-        {hint}
-      </p>
-    )}
-    {error && (
-      <p className="mt-1 text-sm text-red-600">{error}</p>
-    )}
-  </div>
-)
-
-const FormSelect = ({
-  id,
-  label,
-  value,
-  onChange,
-  options,
-  placeholder,
-}: {
-  id: string
-  label: string
-  value: string
-  onChange: (value: string) => void
-  options: readonly string[] | string[]
-  placeholder?: string
-}) => (
-  <div>
-    <label htmlFor={id} className="block text-black text-sm font-bold mb-2">
-      {label}
-    </label>
-    <select
-      id={id}
-      value={value}
-      onChange={(e) => onChange(e.target.value)}
-      className="w-full px-4 py-3 text-base border border-black rounded-lg focus:border-2 focus:border-black focus:outline-none transition-all duration-150 ease-in-out bg-white min-h-[44px]"
-    >
-      {placeholder && <option value="" disabled>{placeholder}</option>}
-      {options.map((opt) => (
-        <option key={opt} value={opt}>{opt}</option>
-      ))}
-    </select>
-  </div>
-)
-
-// ============================================================================
-// COMPONENTS - LAYOUT
+// SUB-COMPONENTS
 // ============================================================================
 
 const Logo = () => (
@@ -535,6 +405,189 @@ const ProgressIndicator = ({ step, progressPercent }: { step: Step; progressPerc
   </>
 )
 
+const InputField = ({
+  label,
+  value,
+  onChange,
+  placeholder,
+  type = 'text',
+  error,
+  autoFocus = false,
+  maxLength,
+}: {
+  label: string
+  value: string
+  onChange: (value: string) => void
+  placeholder?: string
+  type?: string
+  error?: string
+  autoFocus?: boolean
+  maxLength?: number
+}) => (
+  <div className="space-y-2">
+    <label className="block text-black text-sm font-bold mb-2">{label}</label>
+    <input
+      type={type}
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+      placeholder={placeholder}
+      autoFocus={autoFocus}
+      maxLength={maxLength}
+      className={`w-full rounded-lg border border-gray-600 px-4 py-3 text-base focus:outline-none focus:border-2 focus:border-gray-900 focus:ring-2 ${
+        error
+          ? 'border-red-300 focus:border-2 focus:border-red-500 focus:ring-red-200'
+          : 'focus:ring-gray-200'
+      }`}
+    />
+    {error && <p className="text-sm text-red-600">{error}</p>}
+  </div>
+)
+
+const CurrencyInputField = ({
+  label,
+  value,
+  onChange,
+  placeholder,
+  error,
+  autoFocus = false,
+}: {
+  label: string
+  value: string
+  onChange: (value: string) => void
+  placeholder?: string
+  error?: string
+  autoFocus?: boolean
+}) => (
+  <div className="space-y-2">
+    <label className="block text-black text-sm font-bold mb-2">{label}</label>
+    <div className="relative">
+      <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">$</span>
+      <input
+        type="text"
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        placeholder={placeholder}
+        autoFocus={autoFocus}
+        className={`w-full rounded-lg border border-gray-600 pl-8 pr-4 py-3 text-base focus:outline-none focus:border-2 focus:border-gray-900 focus:ring-2 focus:ring-gray-200 ${
+          error
+            ? 'border-red-300 focus:border-2 focus:border-red-500 focus:ring-red-200'
+            : ''
+        }`}
+      />
+    </div>
+    {error && <p className="text-sm text-red-600">{error}</p>}
+  </div>
+)
+
+const SelectField = ({
+  label,
+  value,
+  onChange,
+  options,
+  placeholder,
+}: {
+  label: string
+  value: string
+  onChange: (value: string) => void
+  options: readonly string[]
+  placeholder?: string
+}) => (
+  <div className="space-y-2">
+    <label className="block text-black text-sm font-bold mb-2">{label}</label>
+    <select
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+      className="w-full rounded-lg border border-gray-600 px-4 py-3 text-base focus:border-2 focus:border-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-200"
+    >
+      {placeholder && (
+        <option value="" disabled>
+          {placeholder}
+        </option>
+      )}
+      {options.map((opt) => (
+        <option key={opt} value={opt}>
+          {opt}
+        </option>
+      ))}
+    </select>
+  </div>
+)
+
+const RadioCard = ({
+  value,
+  currentValue,
+  onChange,
+  label,
+  description,
+}: {
+  value: string
+  currentValue: string
+  onChange: (value: string) => void
+  label: string
+  description?: string
+}) => {
+  const isSelected = currentValue === value
+  return (
+    <button
+      type="button"
+      onClick={() => onChange(value)}
+      className={`w-full rounded-lg border-2 p-4 text-left transition-all ${
+        isSelected
+          ? 'border-gray-900 bg-gray-50'
+          : 'border-gray-200 bg-white hover:border-gray-300'
+      }`}
+    >
+      <div className="flex items-start gap-3">
+        <div
+          className={`mt-0.5 flex h-5 w-5 items-center justify-center rounded-full border-2 ${
+            isSelected ? 'border-gray-900 bg-gray-900' : 'border-gray-300 bg-white'
+          }`}
+        >
+          {isSelected && <div className="h-2 w-2 rounded-full bg-white" />}
+        </div>
+        <div>
+          <div className="font-medium text-gray-900">{label}</div>
+          {description && <div className="mt-1 text-sm text-gray-600">{description}</div>}
+        </div>
+      </div>
+    </button>
+  )
+}
+
+const CheckboxField = ({
+  checked,
+  onChange,
+  label,
+  description,
+}: {
+  checked: boolean
+  onChange: () => void
+  label: string
+  description?: string
+}) => (
+  <button
+    type="button"
+    onClick={onChange}
+    className={`flex w-full items-start gap-3 rounded-lg border p-4 text-left transition-colors ${
+      checked
+        ? 'border-gray-900 bg-gray-50'
+        : 'border-gray-200 bg-white hover:bg-gray-50'
+    }`}
+  >
+    <div
+      className={`mt-0.5 flex h-5 w-5 flex-shrink-0 items-center justify-center rounded border-2 ${
+        checked ? 'border-gray-900 bg-gray-900' : 'border-gray-300 bg-white'
+      }`}
+    >
+      {checked && <Check className="h-3 w-3 text-white" strokeWidth={3} />}
+    </div>
+    <div>
+      <div className="font-medium text-gray-900">{label}</div>
+      {description && <div className="mt-1 text-sm text-gray-600">{description}</div>}
+    </div>
+  </button>
+)
+
 const ActionButtons = ({
   step,
   isStepValid,
@@ -547,35 +600,63 @@ const ActionButtons = ({
   isSubmitting: boolean
   onContinue: () => void
   onBack: () => void
-}) => (
-  <div className="flex flex-col gap-3 pt-2">
-    <Button
-      onClick={onContinue}
-      disabled={!isStepValid || isSubmitting}
-      size="lg"
-      className="w-full rounded-full text-base"
-    >
-      {isSubmitting ? (
-        <>
-          <span className="animate-spin mr-2">⏳</span>
-          Launching...
-        </>
-      ) : step === 5 ? (
-        '🚀 Yes, Launch My Ads'
-      ) : (
-        'Next'
-      )}
-    </Button>
+}) => {
+  const getButtonText = () => {
+    if (step === 6) return isSubmitting ? 'Launching...' : '🚀 Yes, Launch My Ads'
+    if (step === 0) return 'Continue'
+    return 'Continue'
+  }
 
-    <Button
-      variant="outline"
-      size="lg"
-      className="w-full rounded-full text-base"
-      onClick={onBack}
-      disabled={isSubmitting}
-    >
-      Back
-    </Button>
+  return (
+    <div className="flex gap-3">
+      {step > 0 && step < 7 && (
+        <Button
+          type="button"
+          variant="outline"
+          onClick={onBack}
+          disabled={isSubmitting}
+          className="h-12 flex-1"
+        >
+          Back
+        </Button>
+      )}
+      <Button
+        type="button"
+        onClick={onContinue}
+        disabled={!isStepValid || isSubmitting}
+        className="h-12 flex-1 bg-gray-900 text-white hover:bg-gray-800 disabled:bg-gray-300"
+      >
+        {getButtonText()}
+      </Button>
+    </div>
+  )
+}
+
+const LeaveConfirmModal = ({ onStay, onLeave }: { onStay: () => void; onLeave: () => void }) => (
+  <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4">
+    <div className="w-full max-w-md rounded-xl bg-white p-6 shadow-xl">
+      <h3 className="mb-2 text-xl font-bold text-gray-900">You're almost done!</h3>
+      <p className="mb-6 text-gray-600">
+        Your progress is saved. Are you sure you want to leave now?
+      </p>
+      <div className="flex gap-3">
+        <Button
+          type="button"
+          variant="outline"
+          onClick={onLeave}
+          className="h-12 flex-1"
+        >
+          Leave
+        </Button>
+        <Button
+          type="button"
+          onClick={onStay}
+          className="h-12 flex-1 bg-gray-900 text-white hover:bg-gray-800"
+        >
+          Stay & Complete
+        </Button>
+      </div>
+    </div>
   </div>
 )
 
@@ -587,51 +668,41 @@ const Step0BusinessName = ({
   businessName,
   onChange,
   onNext,
-  inputRef,
 }: {
   businessName: string
   onChange: (value: string) => void
   onNext: () => void
-  inputRef: React.RefObject<HTMLInputElement>
 }) => {
-  const hasBusinessName = businessName.trim().length > 0
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && businessName.trim().length > 0) {
+      onNext()
+    }
+  }
 
   return (
-    <div className="space-y-5">
-      <div className="mb-6 mx-auto max-w-[526px] w-full text-center">
-        <h1 className="text-foreground font-semibold text-[26px] mt-4 mb-4">
-          What's Your Practice Name?
-        </h1>
-        <p id="business-name-hint" className="mt-2 text-sm md:text-base text-muted-foreground">
-          Use your clinic or brand name.
-        </p>
+    <div className="space-y-6 rounded-xl bg-white p-8 shadow-sm">
+      <div>
+        <h2 className="mb-2 text-2xl font-bold text-gray-900">What's your practice name?</h2>
+        <p className="text-gray-600">We'll use this in your patient booking page</p>
       </div>
-
-      <FormInput
-        id="business-name"
-        label=""
+      <InputField
+        label="Practice Name"
         value={businessName}
         onChange={onChange}
-        placeholder="e.g., Austin Dental Care"
-        autoComplete="organization"
-        inputRef={inputRef}
-        onKeyDown={(e) => {
-          if (e.key === 'Enter' && hasBusinessName) onNext()
-        }}
+        placeholder="e.g., Austin Family Dental"
+        autoFocus
+        maxLength={100}
       />
-
-      <Button
-        type="button"
-        onClick={onNext}
-        disabled={!hasBusinessName}
-        className="w-full"
-      >
-        Next
-      </Button>
-
-      <p className="text-center text-sm text-[#2e2e2e]">
-        Need help? support@dentalflow.com
-      </p>
+      <div className="pt-2">
+        <Button
+          type="button"
+          onClick={onNext}
+          disabled={businessName.trim().length === 0}
+          className="h-12 w-full bg-gray-900 text-white hover:bg-gray-800 disabled:bg-gray-300"
+        >
+          Continue
+        </Button>
+      </div>
     </div>
   )
 }
@@ -642,60 +713,54 @@ const Step1Address = ({
   state,
   zip,
   onChange,
-  inputRef,
 }: {
   streetAddress: string
   city: string
   state: string
   zip: string
   onChange: (field: string, value: string) => void
-  inputRef: React.RefObject<HTMLInputElement>
 }) => {
+  const handleZipChange = (value: string) => {
+    onChange('zip', formatZip(value))
+  }
+
   return (
-    <div className="space-y-5">
-      <div className="text-center mb-8">
-        <h1 className="text-2xl md:text-3xl font-semibold text-foreground">
-          What's Your Practice Address?
-        </h1>
+    <div className="space-y-6 rounded-xl bg-white p-8 shadow-sm">
+      <div>
+        <h2 className="mb-2 text-2xl font-bold text-gray-900">Where's your practice located?</h2>
+        <p className="text-gray-600">We'll target patients near your location</p>
       </div>
-
-      <FormInput
-        id="street-address"
-        label="Street Address"
-        value={streetAddress}
-        onChange={(v) => onChange('streetAddress', v)}
-        autoComplete="address-line1"
-        inputRef={inputRef}
-      />
-
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-        <FormInput
-          id="city"
+      <div className="space-y-4">
+        <InputField
+          label="Street Address"
+          value={streetAddress}
+          onChange={(v) => onChange('streetAddress', v)}
+          placeholder="123 Main Street"
+          autoFocus
+        />
+        <InputField
           label="City"
           value={city}
           onChange={(v) => onChange('city', v)}
-          autoComplete="address-level2"
+          placeholder="Austin"
         />
-
-        <FormSelect
-          id="state"
-          label="State"
-          value={state}
-          onChange={(v) => onChange('state', v)}
-          options={US_STATES}
-          placeholder="Select"
-        />
-
-        <FormInput
-          id="zip"
-          label="Zip"
-          value={zip}
-          onChange={(v) => onChange('zip', formatZip(v))}
-          inputMode="numeric"
-          pattern="\d{5}(-\d{4})?"
-          autoComplete="postal-code"
-          error={getFieldError('zip', zip, {})}
-        />
+        <div className="grid grid-cols-2 gap-4">
+          <SelectField
+            label="State"
+            value={state}
+            onChange={(v) => onChange('state', v)}
+            options={US_STATES}
+            placeholder="Select state"
+          />
+          <InputField
+            label="ZIP Code"
+            value={zip}
+            onChange={handleZipChange}
+            placeholder="78701"
+            error={getFieldError('zip', zip, { zip })}
+            maxLength={10}
+          />
+        </div>
       </div>
     </div>
   )
@@ -706,53 +771,48 @@ const Step2Contact = ({
   email,
   phone,
   onChange,
-  inputRef,
 }: {
   fullName: string
   email: string
   phone: string
   onChange: (field: string, value: string) => void
-  inputRef: React.RefObject<HTMLInputElement>
 }) => {
+  const handlePhoneChange = (value: string) => {
+    onChange('phone', formatPhoneNumber(value))
+  }
+
   return (
-    <div className="space-y-5">
-      <div className="text-center mb-8">
-        <h1 className="text-2xl md:text-3xl font-semibold text-foreground">
-          What's Your Contact Info?
-        </h1>
+    <div className="space-y-6 rounded-xl bg-white p-8 shadow-sm">
+      <div>
+        <h2 className="mb-2 text-2xl font-bold text-gray-900">How can patients reach you?</h2>
+        <p className="text-gray-600">This info appears on your booking page</p>
       </div>
-
-      <FormInput
-        id="full-name"
-        label="Your Name"
-        value={fullName}
-        onChange={(v) => onChange('fullName', v)}
-        autoComplete="name"
-        inputRef={inputRef}
-      />
-
-      <FormInput
-        id="email"
-        label="Email Address"
-        type="email"
-        value={email}
-        onChange={(v) => onChange('email', v)}
-        autoComplete="email"
-        inputMode="email"
-        error={getFieldError('email', email, {})}
-        hint="Booking notifications will be sent here"
-      />
-
-      <FormInput
-        id="phone"
-        label="Phone Number"
-        value={phone}
-        onChange={(v) => onChange('phone', formatPhoneNumber(v))}
-        inputMode="tel"
-        pattern="^\(\d{3}\) \d{3}-\d{4}$"
-        placeholder="(555) 123-4567"
-        error={getFieldError('phone', phone, {})}
-      />
+      <div className="space-y-4">
+        <InputField
+          label="Your Full Name"
+          value={fullName}
+          onChange={(v) => onChange('fullName', v)}
+          placeholder="Dr. Sarah Johnson"
+          autoFocus
+        />
+        <InputField
+          label="Email Address"
+          value={email}
+          onChange={(v) => onChange('email', v)}
+          placeholder="you@example.com"
+          type="email"
+          error={getFieldError('email', email, { email })}
+        />
+        <InputField
+          label="Phone Number"
+          value={phone}
+          onChange={handlePhoneChange}
+          placeholder="(555) 123-4567"
+          type="tel"
+          error={getFieldError('phone', phone, { phone })}
+          maxLength={14}
+        />
+      </div>
     </div>
   )
 }
@@ -768,87 +828,220 @@ const Step3Services = ({
   customPrice: string
   onChange: (field: string, value: string) => void
 }) => {
+  const handlePriceChange = (value: string) => {
+    onChange('customPrice', formatPrice(value))
+  }
+
   return (
-    <div className="space-y-4">
-      <div className="text-center mb-8">
-        <h1 className="text-2xl md:text-3xl font-semibold text-foreground">
-          What will you offer new patients?
-        </h1>
-        <p className="mt-2 text-sm md:text-base text-muted-foreground">
-          Most dentists start with just the $79 cleaning offer.
+    <div className="space-y-6 rounded-xl bg-white p-8 shadow-sm">
+      <div>
+        <h2 className="mb-2 text-2xl font-bold text-gray-900">What service will you offer?</h2>
+        <p className="text-gray-600">
+          Most dentists start with the <span className="font-semibold">$97 cleaning offer</span>
+        </p>
+      </div>
+      <div className="space-y-3">
+        <RadioCard
+          value="standard"
+          currentValue={offerType}
+          onChange={(v) => onChange('offerType', v)}
+          label="Standard Cleaning & Exam"
+          description="Patients pay $97, you earn ~$400-600 in lifetime value"
+        />
+        <RadioCard
+          value="custom"
+          currentValue={offerType}
+          onChange={(v) => onChange('offerType', v)}
+          label="Custom Service"
+          description="Offer a different service at your preferred price"
+        />
+      </div>
+      {offerType === 'custom' && (
+        <div className="space-y-4 rounded-lg border border-gray-200 bg-gray-50 p-4">
+          <InputField
+            label="Service Name"
+            value={customServiceName}
+            onChange={(v) => onChange('customServiceName', v)}
+            placeholder="e.g., Teeth Whitening"
+            autoFocus
+          />
+          <CurrencyInputField
+            label="Patient Price"
+            value={customPrice}
+            onChange={handlePriceChange}
+            placeholder="97"
+            error={getFieldError('customPrice', customPrice, { offerType, customPrice })}
+          />
+        </div>
+      )}
+    </div>
+  )
+}
+
+const Step4Photo = ({
+  photoFile,
+  photoPreview,
+  onPhotoSelect,
+  onPhotoRemove,
+}: {
+  photoFile: File | null
+  photoPreview: string | null
+  onPhotoSelect: (file: File) => void
+  onPhotoRemove: () => void
+}) => {
+  const fileInputRef = useRef<HTMLInputElement>(null)
+  const [isDragging, setIsDragging] = useState(false)
+
+  const handleFileSelect = (file: File) => {
+    if (file && file.type.startsWith('image/')) {
+      onPhotoSelect(file)
+    } else {
+      alert('Please select an image file (JPG, PNG, etc.)')
+    }
+  }
+
+  const handleFileInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (file) handleFileSelect(file)
+  }
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault()
+    setIsDragging(false)
+    const file = e.dataTransfer.files?.[0]
+    if (file) handleFileSelect(file)
+  }
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault()
+    setIsDragging(true)
+  }
+
+  const handleDragLeave = () => {
+    setIsDragging(false)
+  }
+
+  return (
+    <div className="space-y-6 rounded-xl bg-white p-8 shadow-sm">
+      <div>
+        <h2 className="mb-2 text-2xl font-bold text-gray-900">Upload your photo</h2>
+        <p className="text-gray-600">
+          Patients are <span className="font-semibold">3x more likely to book</span> when they see your friendly face
         </p>
       </div>
 
-      <div role="radiogroup" aria-label="New patient offer" className="space-y-4">
-        <button
-          type="button"
-          role="radio"
-          aria-checked={offerType === 'standard'}
-          onClick={() => onChange('offerType', 'standard')}
-          className={`w-full text-left rounded-xl border px-5 py-4 transition ${
-            offerType === 'standard' ? 'border-primary bg-accent' : 'border-border hover:bg-accent'
+      {!photoPreview ? (
+        <div
+          onDrop={handleDrop}
+          onDragOver={handleDragOver}
+          onDragLeave={handleDragLeave}
+          className={`relative rounded-xl border-2 border-dashed p-8 text-center transition-all ${
+            isDragging
+              ? 'border-gray-900 bg-gray-50'
+              : 'border-gray-300 bg-gray-50 hover:border-gray-400'
           }`}
         >
-          <div className="flex items-center justify-between">
-            <div className="text-base md:text-lg font-semibold text-foreground">
-              Cleaning + Exam - $79
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            onChange={handleFileInput}
+            className="hidden"
+          />
+          
+          <div className="space-y-4">
+            <div className="flex justify-center">
+              <div className="rounded-full bg-gray-200 p-4">
+                <Camera className="h-8 w-8 text-gray-900" />
+              </div>
             </div>
-            <span aria-hidden="true" className="text-xl">
-              {offerType === 'standard' ? '◉' : '○'}
-            </span>
-          </div>
-          <div className="text-sm text-muted-foreground mt-1">
-            Cleaning plus comprehensive examination
-          </div>
-        </button>
-
-        <button
-          type="button"
-          role="radio"
-          aria-checked={offerType === 'custom'}
-          onClick={() => onChange('offerType', 'custom')}
-          className={`w-full text-left rounded-xl border px-5 py-4 transition ${
-            offerType === 'custom' ? 'border-primary bg-accent' : 'border-border hover:bg-accent'
-          }`}
-        >
-          <div className="flex items-center justify-between">
-            <div className="text-base md:text-lg font-semibold text-foreground">
-              Custom offer
+            
+            <div>
+              <p className="mb-2 text-lg font-medium text-gray-900">
+                {isDragging ? 'Drop your photo here' : 'Take or upload a photo'}
+              </p>
+              <p className="text-sm text-gray-500">
+                A professional headshot or friendly selfie works best
+              </p>
             </div>
-            <span aria-hidden="true" className="text-xl">
-              {offerType === 'custom' ? '◉' : '○'}
-            </span>
+
+            <div className="space-y-2">
+              <Button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                className="h-12 w-full bg-gray-900 text-white hover:bg-gray-800"
+              >
+                <Upload className="mr-2 h-5 w-5" />
+                Choose Photo
+              </Button>
+              <p className="text-xs text-gray-400">JPG, PNG, or HEIC • Max 10MB</p>
+            </div>
+          </div>
+        </div>
+      ) : (
+        <div className="space-y-4">
+          <div className="relative overflow-hidden rounded-xl border-2 border-gray-200 bg-gray-100">
+            <img
+              src={photoPreview}
+              alt="Your photo"
+              className="h-64 w-full object-cover"
+            />
+            <button
+              type="button"
+              onClick={onPhotoRemove}
+              className="absolute right-2 top-2 rounded-full bg-white p-2 shadow-lg transition-transform hover:scale-110"
+            >
+              <X className="h-5 w-5 text-gray-700" />
+            </button>
+          </div>
+          
+          <div className="rounded-lg border-2 border-gray-900 bg-gray-50 p-4">
+            <div className="flex items-start gap-3">
+              <div className="flex-shrink-0">
+                <div className="flex h-6 w-6 items-center justify-center rounded-full bg-gray-900">
+                  <Check className="h-4 w-4 text-white" strokeWidth={3} />
+                </div>
+              </div>
+              <div>
+                <p className="font-medium text-gray-900">Great photo!</p>
+                <p className="mt-1 text-sm text-gray-700">
+                  This will appear on your patient booking page to build trust
+                </p>
+              </div>
+            </div>
           </div>
 
-          <div className="mt-3 grid grid-cols-1 md:grid-cols-2 gap-3" onClick={(e) => e.stopPropagation()}>
-            <FormInput
-              id="custom-service-name"
-              label="Service name"
-              value={customServiceName}
-              onChange={(v) => onChange('customServiceName', v)}
-              placeholder="e.g., Whitening + Exam"
-              required={false}
-            />
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => fileInputRef.current?.click()}
+            className="h-12 w-full"
+          >
+            <Upload className="mr-2 h-5 w-5" />
+            Choose Different Photo
+          </Button>
+          
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            onChange={handleFileInput}
+            className="hidden"
+          />
+        </div>
+      )}
 
-            <FormInput
-              id="custom-price"
-              label="Price patient pays"
-              value={customPrice}
-              onChange={(v) => onChange('customPrice', formatPrice(v))}
-              placeholder="79"
-              inputMode="decimal"
-              pattern="^\d+(\.\d{1,2})?$"
-              prefix="$"
-              required={false}
-            />
-          </div>
-        </button>
+      <div className="rounded-lg border border-gray-300 bg-gray-50 p-4">
+        <p className="text-sm text-gray-700">
+          <span className="font-semibold">Pro tip:</span> Smile naturally and make sure your face is well-lit. 
+          Patients respond best to warm, approachable photos.
+        </p>
       </div>
     </div>
   )
 }
 
-const Step4Availability = ({
+const Step5Availability = ({
   availableDays,
   startTime,
   endTime,
@@ -870,139 +1063,83 @@ const Step4Availability = ({
   onChange: (field: string, value: string) => void
   onToggleDay: (day: keyof AvailableDays) => void
   onTogglePref: (pref: 'prefSms' | 'prefEmail' | 'prefSameDay') => void
-}) => {
-  return (
-    <div className="space-y-6">
-      <div className="text-center mb-8">
-        <h1 className="text-2xl md:text-3xl font-semibold text-foreground">
-          When can you see new patients?
-        </h1>
-      </div>
-
+}) => (
+  <div className="space-y-6 rounded-xl bg-white p-8 shadow-sm">
+    <div>
+      <h2 className="mb-2 text-2xl font-bold text-gray-900">When can you see new patients?</h2>
+      <p className="text-gray-600">We'll only book appointments during these times</p>
+    </div>
+    <div className="space-y-4">
       <div>
-        <label className="block text-black text-sm font-bold mb-2">Available Days</label>
-        <div className="flex flex-wrap gap-2">
-          {DAY_KEYS.map((d) => (
+        <label className="mb-2 block text-black text-sm font-bold">Available Days</label>
+        <div className="grid grid-cols-7 gap-2">
+          {DAY_KEYS.map((day) => (
             <button
-              key={d}
+              key={day}
               type="button"
-              onClick={() => onToggleDay(d)}
-              className={`px-4 py-2 rounded-full border transition ${
-                availableDays[d]
-                  ? 'border-black bg-black text-white'
-                  : 'border-black bg-white'
+              onClick={() => onToggleDay(day)}
+              className={`rounded-lg border-2 px-2 py-3 text-center text-xs font-medium transition-all ${
+                availableDays[day]
+                  ? 'border-gray-900 bg-gray-900 text-white'
+                  : 'border-gray-200 bg-white text-gray-500 hover:border-gray-300'
               }`}
             >
-              {d}
+              {day}
             </button>
           ))}
         </div>
       </div>
-
-      <div>
-        <label className="block text-black text-sm font-bold mb-2">Office Hours</label>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-          <FormSelect
-            id="start-time"
-            label="From"
-            value={startTime}
-            onChange={(v) => onChange('startTime', v)}
-            options={TIME_OPTIONS.start}
-          />
-
-          <FormSelect
-            id="end-time"
-            label="To"
-            value={endTime}
-            onChange={(v) => onChange('endTime', v)}
-            options={TIME_OPTIONS.end}
-          />
-        </div>
+      <div className="grid grid-cols-2 gap-4">
+        <SelectField
+          label="Start Time"
+          value={startTime}
+          onChange={(v) => onChange('startTime', v)}
+          options={TIME_OPTIONS.start}
+        />
+        <SelectField
+          label="End Time"
+          value={endTime}
+          onChange={(v) => onChange('endTime', v)}
+          options={TIME_OPTIONS.end}
+        />
       </div>
-
-      <FormInput
-        id="max-new-patients"
-        label="Maximum New Patients Per Month"
-        type="number"
+      <InputField
+        label="Max New Patients Per Month"
         value={maxNewPatients}
-        onChange={(v) => onChange('maxNewPatients', v)}
+        onChange={(v) => onChange('maxNewPatients', v.replace(/\D/g, ''))}
         placeholder="30"
-        hint="We'll automatically pause ads when this limit is reached"
+        type="number"
       />
-
       <div>
-        <label className="block text-black text-sm font-bold mb-2">
-          Patient Booking Preferences
+        <label className="mb-2 block text-black text-sm font-bold">
+          Notification Preferences
         </label>
         <div className="space-y-2">
-          <label className="flex items-center gap-2 cursor-pointer">
-            <input
-              className="accent-black"
-              type="checkbox"
-              checked={prefSms}
-              onChange={() => onTogglePref('prefSms')}
-            />
-            <span>Send me SMS when patients book</span>
-          </label>
-          <label className="flex items-center gap-2 cursor-pointer">
-            <input
-              className="accent-black"
-              type="checkbox"
-              checked={prefEmail}
-              onChange={() => onTogglePref('prefEmail')}
-            />
-            <span>Send me email summaries (daily)</span>
-          </label>
-          <label className="flex items-center gap-2 cursor-pointer">
-            <input
-              className="accent-black"
-              type="checkbox"
-              checked={prefSameDay}
-              onChange={() => onTogglePref('prefSameDay')}
-            />
-            <span>Allow same-day bookings</span>
-          </label>
+          <CheckboxField
+            checked={prefSms}
+            onChange={() => onTogglePref('prefSms')}
+            label="SMS notifications"
+            description="Get text alerts for new bookings"
+          />
+          <CheckboxField
+            checked={prefEmail}
+            onChange={() => onTogglePref('prefEmail')}
+            label="Email notifications"
+            description="Receive booking confirmations via email"
+          />
+          <CheckboxField
+            checked={prefSameDay}
+            onChange={() => onTogglePref('prefSameDay')}
+            label="Allow same-day bookings"
+            description="Let patients book appointments for today"
+          />
         </div>
       </div>
-    </div>
-  )
-}
-
-const ReviewCard = ({
-  title,
-  emoji,
-  onEdit,
-  children,
-  highlighted = false,
-}: {
-  title: string
-  emoji: string
-  onEdit: () => void
-  children: React.ReactNode
-  highlighted?: boolean
-}) => (
-  <div className={`rounded-lg border p-4 ${highlighted ? 'border-2 border-green-500 bg-green-50' : 'border-border bg-accent/50'}`}>
-    <div className="flex items-center justify-between mb-3">
-      <h2 className={`text-base font-semibold ${highlighted ? 'text-green-900' : ''}`}>
-        {emoji} {title}
-      </h2>
-      {!highlighted && (
-        <button
-          type="button"
-          className="text-sm text-primary underline"
-          onClick={onEdit}
-        >
-          Edit
-        </button>
-      )}
-    </div>
-    <div className={highlighted ? 'text-green-900' : ''}>
-      {children}
     </div>
   </div>
 )
 
-const Step5Review = ({
+const Step6Review = ({
   formData,
   onEdit,
   onToggleTerms,
@@ -1011,294 +1148,186 @@ const Step5Review = ({
   onEdit: (step: Step) => void
   onToggleTerms: () => void
 }) => {
+  const serviceName = formData.offerType === 'standard' 
+    ? 'Standard Cleaning & Exam' 
+    : formData.customServiceName
+  const servicePrice = formData.offerType === 'standard' 
+    ? '$97' 
+    : `$${formData.customPrice}`
+
   return (
-    <div className="space-y-6">
-      <div className="text-center mb-8">
-        <h1 className="text-2xl md:text-3xl font-semibold text-foreground">
-          Confirm your details
-        </h1>
+    <div className="space-y-6 rounded-xl bg-white p-8 shadow-sm">
+      <div>
+        <h2 className="mb-2 text-2xl font-bold text-gray-900">Review your information</h2>
+        <p className="text-gray-600">Make sure everything looks good before launching</p>
       </div>
 
-      {/* Practice Card */}
-      <ReviewCard
-        title="Practice Information"
-        emoji="📋"
-        onEdit={() => onEdit(0)}
-      >
-        <dl className="space-y-2 text-sm">
-          <div className="grid grid-cols-[100px_1fr] gap-2">
-            <dt className="text-muted-foreground">Business:</dt>
-            <dd className="font-medium">{formData.businessName || '—'}</dd>
-          </div>
-          <div className="grid grid-cols-[100px_1fr] gap-2">
-            <dt className="text-muted-foreground">Contact:</dt>
-            <dd>{formData.fullName || '—'}</dd>
-          </div>
-          <div className="grid grid-cols-[100px_1fr] gap-2">
-            <dt className="text-muted-foreground">Email:</dt>
-            <dd>{formData.email || '—'}</dd>
-          </div>
-          <div className="grid grid-cols-[100px_1fr] gap-2">
-            <dt className="text-muted-foreground">Phone:</dt>
-            <dd>{formData.phone || '—'}</dd>
-          </div>
-          <div className="grid grid-cols-[100px_1fr] gap-2">
-            <dt className="text-muted-foreground">Address:</dt>
-            <dd>
-              {[
-                formData.streetAddress,
-                formData.city && formData.state ? `${formData.city}, ${formData.state}` : '',
-                formData.zip,
-              ]
-                .filter(Boolean)
-                .join(', ') || '—'}
-            </dd>
-          </div>
-        </dl>
-      </ReviewCard>
+      <div className="space-y-4">
+        <ReviewSection title="Practice Info" onEdit={() => onEdit(0)}>
+          <ReviewItem label="Practice Name" value={formData.businessName} />
+          <ReviewItem
+            label="Address"
+            value={`${formData.streetAddress}, ${formData.city}, ${formData.state} ${formData.zip}`}
+          />
+        </ReviewSection>
 
-      {/* Services Card */}
-      <ReviewCard
-        title="Service Offered"
-        emoji="💰"
-        onEdit={() => onEdit(3)}
-      >
-        <p className="text-sm">
-          {formData.offerType === 'standard'
-            ? 'Cleaning + Exam - $79'
-            : `${formData.customServiceName || 'Custom offer'} - $${Number(formData.customPrice || '79').toString()}`}
-        </p>
-      </ReviewCard>
+        <ReviewSection title="Contact" onEdit={() => onEdit(2)}>
+          <ReviewItem label="Name" value={formData.fullName} />
+          <ReviewItem label="Email" value={formData.email} />
+          <ReviewItem label="Phone" value={formData.phone} />
+        </ReviewSection>
 
-      {/* Availability Card */}
-      <ReviewCard
-        title="Availability"
-        emoji="📅"
-        onEdit={() => onEdit(4)}
-      >
-        <dl className="space-y-2 text-sm">
-          <div className="grid grid-cols-[100px_1fr] gap-2">
-            <dt className="text-muted-foreground">Days:</dt>
-            <dd>{formData.availableDays ? formatDaysForDisplay(formData.availableDays) : '—'}</dd>
-          </div>
-          <div className="grid grid-cols-[100px_1fr] gap-2">
-            <dt className="text-muted-foreground">Hours:</dt>
-            <dd>{formData.startTime} - {formData.endTime}</dd>
-          </div>
-          <div className="grid grid-cols-[100px_1fr] gap-2">
-            <dt className="text-muted-foreground">Capacity:</dt>
-            <dd>{formData.maxNewPatients}/month</dd>
-          </div>
-        </dl>
-      </ReviewCard>
+        <ReviewSection title="Service Offered" onEdit={() => onEdit(3)}>
+          <ReviewItem label="Service" value={serviceName} />
+          <ReviewItem label="Patient Price" value={servicePrice} />
+        </ReviewSection>
 
-      {/* Target Area Card */}
-      <ReviewCard
-        title="Your Target Area"
-        emoji="🎯"
-        onEdit={() => onEdit(1)}
-      >
-        <p className="text-sm text-muted-foreground">
-          We'll show your ads to people within 15 miles of{' '}
-          {formData.city && formData.state ? `${formData.city}, ${formData.state}` : 'your city'}
-        </p>
-        <p className="text-sm text-muted-foreground mt-1">
-          Estimated reach: ~250,000 potential patients
-        </p>
-      </ReviewCard>
+        <ReviewSection title="Photo" onEdit={() => onEdit(4)}>
+          {formData.photoPreview ? (
+            <img
+              src={formData.photoPreview}
+              alt="Your photo"
+              className="h-20 w-20 rounded-lg border border-gray-200 object-cover"
+            />
+          ) : (
+            <p className="text-sm text-gray-500">No photo uploaded</p>
+          )}
+        </ReviewSection>
 
-      {/* What's Next Card */}
-      <ReviewCard
-        title="What happens next?"
-        emoji="✅"
-        onEdit={() => {}}
-      >
-        <ul className="space-y-2 text-sm">
-          <li className="flex items-start gap-2">
-            <Check className="h-4 w-4 text-black mt-0.5 flex-shrink-0" />
-            <span>We launch your TikTok ads (within 2 hours)</span>
-          </li>
-          <li className="flex items-start gap-2">
-            <Check className="h-4 w-4 text-black mt-0.5 flex-shrink-0" />
-            <span>Email confirmation when ads go live</span>
-          </li>
-          <li className="flex items-start gap-2">
-            <Check className="h-4 w-4 text-black mt-0.5 flex-shrink-0" />
-            <span>First bookings (typically 3-5 days)</span>
-          </li>
-          <li className="flex items-start gap-2">
-            <Check className="h-4 w-4 text-black mt-0.5 flex-shrink-0" />
-            <span>You pay $150/patient only after we deliver 10+</span>
-          </li>
-        </ul>
-      </ReviewCard>
+        <ReviewSection title="Availability" onEdit={() => onEdit(5)}>
+          <ReviewItem
+            label="Days"
+            value={formatDaysForDisplay(formData.availableDays || DEFAULT_AVAILABLE_DAYS)}
+          />
+          <ReviewItem
+            label="Hours"
+            value={`${formData.startTime} - ${formData.endTime}`}
+          />
+          <ReviewItem
+            label="Max Patients/Month"
+            value={formData.maxNewPatients}
+          />
+        </ReviewSection>
+      </div>
 
-      {/* Terms Checkbox */}
-      <label className="flex items-start gap-3 text-sm cursor-pointer">
-        <input
-          className="mt-1 accent-black cursor-pointer"
-          type="checkbox"
-          checked={formData.agreeTerms}
+      <div className="rounded-lg border-2 border-gray-900 bg-gray-50 p-4">
+        <CheckboxField
+          checked={formData.agreeTerms || false}
           onChange={onToggleTerms}
+          label="I agree to the terms and conditions"
+          description="You'll only be charged $150 per patient after we deliver 10+ confirmed appointments"
         />
-        <span>
-          I agree to the{' '}
-          <a href="/terms" className="underline text-primary" target="_blank" rel="noopener">
-            Terms of Service
-          </a>{' '}
-          and understand the no-refund policy for the $500 trial payment
-        </span>
-      </label>
+      </div>
+
+      <div className="rounded-lg border border-gray-200 bg-gray-50 p-4">
+        <h4 className="mb-2 font-semibold text-gray-900">What happens next?</h4>
+        <ul className="space-y-1 text-sm text-gray-600">
+          <li>✓ Your ads will launch within 24 hours</li>
+          <li>✓ Track everything in real-time from your dashboard</li>
+          <li>✓ We'll notify you when patients book</li>
+          <li>✓ You only pay $150/patient after we deliver 10+</li>
+        </ul>
+      </div>
     </div>
   )
 }
 
-const Step6Success = ({ onGoToDashboard }: { onGoToDashboard: () => void }) => {
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      onGoToDashboard()
-    }, SUCCESS_REDIRECT_DELAY_MS)
+const ReviewSection = ({
+  title,
+  onEdit,
+  children,
+}: {
+  title: string
+  onEdit: () => void
+  children: React.ReactNode
+}) => (
+  <div className="rounded-lg border border-gray-200 p-4">
+    <div className="mb-3 flex items-center justify-between">
+      <h4 className="font-semibold text-gray-900">{title}</h4>
+      <button
+        type="button"
+        onClick={onEdit}
+        className="text-sm font-medium text-gray-900 underline hover:text-gray-700"
+      >
+        Edit
+      </button>
+    </div>
+    <div className="space-y-2">{children}</div>
+  </div>
+)
 
-    return () => clearTimeout(timer)
-  }, [onGoToDashboard])
+const ReviewItem = ({ label, value }: { label: string; value?: string }) => (
+  <div className="flex justify-between text-sm">
+    <span className="text-gray-600">{label}</span>
+    <span className="font-medium text-gray-900">{value}</span>
+  </div>
+)
+
+const Step7Success = ({ onGoToDashboard }: { onGoToDashboard: () => void }) => {
+  useEffect(() => {
+    clearLocalStorage()
+  }, [])
 
   return (
-    <div className="text-center mb-8">
-      <ConfettiAnimation />
-
-      <div className="text-4xl mb-4" aria-hidden="true">
-        🎉
+    <div className="space-y-6 rounded-xl bg-white p-8 text-center shadow-sm">
+      <div className="text-6xl">🎉</div>
+      <div>
+        <h2 className="mb-2 text-3xl font-bold text-gray-900">Your ads are launching!</h2>
+        <p className="text-lg text-gray-600">
+          We'll send you an email once your campaign is live
+        </p>
       </div>
-      <h1 className="text-foreground font-semibold text-[26px] mt-4 mb-4">
-        Your ads are launching!
-      </h1>
-      <p className="mt-2 text-sm md:text-base text-muted-foreground">
-        We'll email you when they go live.
-      </p>
-      <p className="mt-2 text-xs text-muted-foreground">
-        Redirecting to dashboard in {SUCCESS_REDIRECT_DELAY_MS / 1000} seconds...
-      </p>
-      <Button className="mt-6 w-full" onClick={onGoToDashboard}>
-        Go to dashboard
+      <div className="rounded-lg border-2 border-gray-900 bg-gray-50 p-6">
+        <div className="mb-4 flex justify-center">
+          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gray-900">
+            <Check className="h-7 w-7 text-white" strokeWidth={3} />
+          </div>
+        </div>
+        <h3 className="mb-2 font-semibold text-gray-900">What's Next?</h3>
+        <ul className="space-y-2 text-left text-sm text-gray-700">
+          <li className="flex items-start gap-2">
+            <span className="mt-0.5">✓</span>
+            <span>Your campaign will be live within 24 hours</span>
+          </li>
+          <li className="flex items-start gap-2">
+            <span className="mt-0.5">✓</span>
+            <span>Track bookings in real-time from your dashboard</span>
+          </li>
+          <li className="flex items-start gap-2">
+            <span className="mt-0.5">✓</span>
+            <span>You'll be notified when patients book appointments</span>
+          </li>
+          <li className="flex items-start gap-2">
+            <span className="mt-0.5">✓</span>
+            <span>Remember: You only pay after we deliver 10+ patients</span>
+          </li>
+        </ul>
+      </div>
+      <Button
+        type="button"
+        onClick={onGoToDashboard}
+        className="h-12 w-full bg-gray-900 text-white hover:bg-gray-800"
+      >
+        Go to Dashboard
       </Button>
     </div>
   )
 }
 
 // ============================================================================
-// CUSTOM HOOKS
-// ============================================================================
-
-const useFormPersistence = (step: Step, formData: Partial<FormData>) => {
-  useEffect(() => {
-    if (step < 6) {
-      saveToLocalStorage({ ...formData, step })
-    } else {
-      clearLocalStorage()
-    }
-  }, [step, formData])
-}
-
-const useNavigationGuard = (
-  step: Step,
-  isLeavingConfirmed: boolean,
-  setShowLeaveConfirm: (show: boolean) => void
-) => {
-  const hasPushedGuardRef = useRef(false)
-
-  useEffect(() => {
-    const onBeforeUnload = (e: BeforeUnloadEvent) => {
-      if (!isLeavingConfirmed && step > 0 && step < 6) {
-        e.preventDefault()
-        e.returnValue = ''
-        return ''
-      }
-    }
-
-    const onPopState = () => {
-      if (isLeavingConfirmed) return
-      if (step > 0 && step < 6) {
-        setShowLeaveConfirm(true)
-        history.pushState({ guard: 'onboarding' }, '', window.location.href)
-      }
-    }
-
-    if (!isLeavingConfirmed && step > 0 && step < 6 && !hasPushedGuardRef.current) {
-      history.pushState({ guard: 'onboarding' }, '', window.location.href)
-      hasPushedGuardRef.current = true
-    }
-
-    if (!isLeavingConfirmed && step > 0 && step < 6) {
-      window.addEventListener('beforeunload', onBeforeUnload)
-      window.addEventListener('popstate', onPopState)
-    }
-
-    return () => {
-      window.removeEventListener('beforeunload', onBeforeUnload)
-      window.removeEventListener('popstate', onPopState)
-    }
-  }, [step, isLeavingConfirmed, setShowLeaveConfirm])
-}
-
-const useKeyboardShortcuts = (
-  step: Step,
-  isStepValid: boolean,
-  onContinue: () => void,
-  onBack: () => void
-) => {
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (
-        e.target instanceof HTMLInputElement ||
-        e.target instanceof HTMLTextAreaElement ||
-        e.target instanceof HTMLSelectElement
-      ) {
-        return
-      }
-
-      if ((e.metaKey || e.ctrlKey) && e.key === 'Enter' && isStepValid) {
-        onContinue()
-      }
-
-      if (e.key === 'Escape' && step > 0 && step < 6) {
-        onBack()
-      }
-    }
-
-    window.addEventListener('keydown', handleKeyDown)
-    return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [step, isStepValid, onContinue, onBack])
-}
-
-const useAnalytics = (step: Step) => {
-  useEffect(() => {
-    trackStepView(step)
-  }, [step])
-}
-
-const useAutofocus = (step: Step, refs: { [key: number]: React.RefObject<HTMLInputElement> }) => {
-  useEffect(() => {
-    const ref = refs[step]
-    if (ref?.current) {
-      ref.current.focus()
-    }
-  }, [step, refs])
-}
-
-// ============================================================================
 // MAIN COMPONENT
 // ============================================================================
 
-export default function OnboardingV2() {
+export default function OnboardingForm() {
   const router = useRouter()
 
-  // State - UI
+  // Step & control state
   const [step, setStep] = useState<Step>(0)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [showLeaveConfirm, setShowLeaveConfirm] = useState(false)
   const [isLeavingConfirmed, setIsLeavingConfirmed] = useState(false)
 
-  // State - Form data
+  // Form state
   const [businessName, setBusinessName] = useState(DEFAULT_FORM_DATA.businessName)
   const [streetAddress, setStreetAddress] = useState(DEFAULT_FORM_DATA.streetAddress)
   const [city, setCity] = useState(DEFAULT_FORM_DATA.city)
@@ -1310,6 +1339,8 @@ export default function OnboardingV2() {
   const [offerType, setOfferType] = useState<'standard' | 'custom'>(DEFAULT_FORM_DATA.offerType)
   const [customServiceName, setCustomServiceName] = useState(DEFAULT_FORM_DATA.customServiceName)
   const [customPrice, setCustomPrice] = useState(DEFAULT_FORM_DATA.customPrice)
+  const [photoFile, setPhotoFile] = useState<File | null>(DEFAULT_FORM_DATA.photoFile)
+  const [photoPreview, setPhotoPreview] = useState<string | null>(DEFAULT_FORM_DATA.photoPreview)
   const [availableDays, setAvailableDays] = useState<AvailableDays>(DEFAULT_FORM_DATA.availableDays)
   const [startTime, setStartTime] = useState(DEFAULT_FORM_DATA.startTime)
   const [endTime, setEndTime] = useState(DEFAULT_FORM_DATA.endTime)
@@ -1318,11 +1349,6 @@ export default function OnboardingV2() {
   const [prefEmail, setPrefEmail] = useState(DEFAULT_FORM_DATA.prefEmail)
   const [prefSameDay, setPrefSameDay] = useState(DEFAULT_FORM_DATA.prefSameDay)
   const [agreeTerms, setAgreeTerms] = useState(DEFAULT_FORM_DATA.agreeTerms)
-
-  // Refs for autofocus
-  const businessNameRef = useRef<HTMLInputElement>(null)
-  const streetAddressRef = useRef<HTMLInputElement>(null)
-  const fullNameRef = useRef<HTMLInputElement>(null)
 
   // Derived state
   const formData: Partial<FormData> = {
@@ -1337,6 +1363,8 @@ export default function OnboardingV2() {
     offerType,
     customServiceName,
     customPrice,
+    photoFile,
+    photoPreview,
     availableDays,
     startTime,
     endTime,
@@ -1365,6 +1393,7 @@ export default function OnboardingV2() {
       setOfferType(saved.offerType || DEFAULT_FORM_DATA.offerType)
       setCustomServiceName(saved.customServiceName || DEFAULT_FORM_DATA.customServiceName)
       setCustomPrice(saved.customPrice || DEFAULT_FORM_DATA.customPrice)
+      setPhotoPreview(saved.photoPreview || DEFAULT_FORM_DATA.photoPreview)
       setAvailableDays(saved.availableDays || DEFAULT_FORM_DATA.availableDays)
       setStartTime(saved.startTime || DEFAULT_FORM_DATA.startTime)
       setEndTime(saved.endTime || DEFAULT_FORM_DATA.endTime)
@@ -1373,7 +1402,7 @@ export default function OnboardingV2() {
       setPrefEmail(saved.prefEmail ?? DEFAULT_FORM_DATA.prefEmail)
       setPrefSameDay(saved.prefSameDay ?? DEFAULT_FORM_DATA.prefSameDay)
       setAgreeTerms(saved.agreeTerms ?? DEFAULT_FORM_DATA.agreeTerms)
-      if (saved.step !== undefined && saved.step < 6) {
+      if (saved.step !== undefined && saved.step < 7) {
         setStep(saved.step)
       }
     }
@@ -1383,15 +1412,10 @@ export default function OnboardingV2() {
   useFormPersistence(step, formData)
   useNavigationGuard(step, isLeavingConfirmed, setShowLeaveConfirm)
   useAnalytics(step)
-  useAutofocus(step, {
-    0: businessNameRef,
-    1: streetAddressRef,
-    2: fullNameRef,
-  })
 
   // Navigation handlers
   const next = () => {
-    if (step < 6) {
+    if (step < 7) {
       trackStepComplete(step)
       setStep((s) => ((s + 1) as Step))
     }
@@ -1432,6 +1456,20 @@ export default function OnboardingV2() {
     }
   }
 
+  const handlePhotoSelect = (file: File) => {
+    setPhotoFile(file)
+    const reader = new FileReader()
+    reader.onloadend = () => {
+      setPhotoPreview(reader.result as string)
+    }
+    reader.readAsDataURL(file)
+  }
+
+  const handlePhotoRemove = () => {
+    setPhotoFile(null)
+    setPhotoPreview(null)
+  }
+
   const toggleDay = (day: keyof AvailableDays) => {
     setAvailableDays((prev) => ({ ...prev, [day]: !prev[day] }))
   }
@@ -1456,16 +1494,23 @@ export default function OnboardingV2() {
     // Simulate API call for now
     setTimeout(() => {
       trackOnboardingComplete()
-      next() // Go to step 6 (success)
+      next() // Go to step 7 (success)
       setIsSubmitting(false)
     }, LAUNCH_DELAY_MS)
 
     // TODO: Replace with actual API call
+    // const formDataToSubmit = new FormData()
+    // Object.entries(formData).forEach(([key, value]) => {
+    //   if (key === 'photoFile' && value) {
+    //     formDataToSubmit.append('photo', value)
+    //   } else if (key !== 'photoPreview' && key !== 'photoFile') {
+    //     formDataToSubmit.append(key, JSON.stringify(value))
+    //   }
+    // })
     // try {
     //   const response = await fetch('/api/onboarding/complete', {
     //     method: 'POST',
-    //     headers: { 'Content-Type': 'application/json' },
-    //     body: JSON.stringify(formData),
+    //     body: formDataToSubmit,
     //   })
     //   if (response.ok) {
     //     trackOnboardingComplete()
@@ -1481,7 +1526,7 @@ export default function OnboardingV2() {
 
   // Continue handler
   const handleContinue = () => {
-    if (step === 5) {
+    if (step === 6) {
       handleSubmit()
     } else if (currentStepValid) {
       next()
@@ -1518,7 +1563,6 @@ export default function OnboardingV2() {
               businessName={businessName}
               onChange={setBusinessName}
               onNext={next}
-              inputRef={businessNameRef}
             />
           )}
 
@@ -1529,7 +1573,6 @@ export default function OnboardingV2() {
               state={addressState}
               zip={zip}
               onChange={updateField}
-              inputRef={streetAddressRef}
             />
           )}
 
@@ -1539,7 +1582,6 @@ export default function OnboardingV2() {
               email={email}
               phone={phone}
               onChange={updateField}
-              inputRef={fullNameRef}
             />
           )}
 
@@ -1553,7 +1595,16 @@ export default function OnboardingV2() {
           )}
 
           {step === 4 && (
-            <Step4Availability
+            <Step4Photo
+              photoFile={photoFile}
+              photoPreview={photoPreview}
+              onPhotoSelect={handlePhotoSelect}
+              onPhotoRemove={handlePhotoRemove}
+            />
+          )}
+
+          {step === 5 && (
+            <Step5Availability
               availableDays={availableDays}
               startTime={startTime}
               endTime={endTime}
@@ -1567,19 +1618,19 @@ export default function OnboardingV2() {
             />
           )}
 
-          {step === 5 && (
-            <Step5Review
+          {step === 6 && (
+            <Step6Review
               formData={formData}
               onEdit={goToStep}
               onToggleTerms={toggleTerms}
             />
           )}
 
-          {step === 6 && (
-            <Step6Success onGoToDashboard={handleGoToDashboard} />
+          {step === 7 && (
+            <Step7Success onGoToDashboard={handleGoToDashboard} />
           )}
 
-          {step > 0 && step < 6 && (
+          {step > 0 && step < 7 && (
             <ActionButtons
               step={step}
               isStepValid={currentStepValid}
@@ -1591,7 +1642,7 @@ export default function OnboardingV2() {
         </div>
       </div>
 
-      {showLeaveConfirm && step < 6 && (
+      {showLeaveConfirm && step < 7 && (
         <LeaveConfirmModal onStay={handleStay} onLeave={handleLeave} />
       )}
     </main>
